@@ -9,17 +9,40 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/core": "^7.16.0",
+    "@mantine/form": "^7.16.0",
+    "@mantine/hooks": "^7.16.0",
+    "@prisma/client": "^6.2.1",
+    "@tabler/icons-react": "^3.29.0",
+    "@trpc/client": "^11.0.0-rc.700",
+    "@trpc/next": "^11.0.0-rc.700",
+    "@trpc/react-query": "^11.0.0-rc.700",
+    "@trpc/server": "^11.0.0-rc.700",
+    "axios": "^1.7.9",
+    "bluebird": "^3.7.2",
+    "luxon": "^3.5.0",
+    "next": "15.1.4",
+    "pino": "^9.6.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.1.4"
+    "zod": "^3.24.1"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@types/bluebird": "^3.5.42",
+    "@types/luxon": "^3.4.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vellone/techsak": "^1.0.2",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
-    "@eslint/eslintrc": "^3"
+    "npm-check-updates": "^17.1.14",
+    "postcss": "^8.5.1",
+    "postcss-preset-mantine": "^1.17.0",
+    "postcss-simple-vars": "^7.0.1",
+    "prisma": "^6.2.1",
+    "prisma-dbml-generator": "^0.12.0",
+    "typescript": "^5"
   }
 }

@@ -1,0 +1,68 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table stores {
+  id Int [pk, increment]
+  name String [not null]
+  cnpj String [unique, not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  storeProducts store_products [not null]
+}
+
+Table notas_fiscais {
+  id Int [pk, increment]
+  chaveAcesso String [not null]
+  emittedAt DateTime [not null]
+  processedAt DateTime [not null]
+  notaFiscalProducts nota_fiscal_products [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+}
+
+Table nota_fiscal_products {
+  id Int [pk, increment]
+  notaFiscalId Int [not null]
+  productId Int [not null]
+  quantity Int [not null]
+  price Int [not null]
+  notaFiscal notas_fiscais [not null]
+  product products [not null]
+}
+
+Table products {
+  id Int [pk, increment]
+  name String [not null]
+  unit ProductUnit [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  storeProducts store_products [not null]
+  notaFiscalProducts nota_fiscal_products [not null]
+}
+
+Table store_products {
+  storeId Int [not null]
+  code String [not null]
+  productId Int [not null]
+  store stores [not null]
+  product products [not null]
+
+  indexes {
+    (storeId, code) [pk]
+  }
+}
+
+Enum ProductUnit {
+  UN
+  KG
+  L
+}
+
+Ref: nota_fiscal_products.notaFiscalId > notas_fiscais.id
+
+Ref: nota_fiscal_products.productId > products.id
+
+Ref: store_products.storeId > stores.id
+
+Ref: store_products.productId > products.id
