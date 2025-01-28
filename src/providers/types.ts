@@ -1,5 +1,5 @@
 import { ProductUnit } from '@prisma/client'
-import { ChaveAcessoNFCe } from '~/helpers/types'
+import { InvoiceAccessKey } from '~/helpers/types'
 
 type Product = {
   code: string
@@ -12,11 +12,11 @@ type Product = {
 }
 
 export type NFCeQueryResult = {
-  accessKey: ChaveAcessoNFCe
+  accessKey: InvoiceAccessKey
   storeCNPJ: string
   storeName: string
   emittedAt: Date
   products: Product[]
 }
 
-export type Query = (accessKey: ChaveAcessoNFCe) => Promise<NFCeQueryResult>
+export type Query = (accessKey: InvoiceAccessKey) => Promise<NFCeQueryResult>

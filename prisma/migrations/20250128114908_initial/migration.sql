@@ -8,9 +8,9 @@ CREATE TABLE "stores" (
 );
 
 -- CreateTable
-CREATE TABLE "notas_fiscais" (
+CREATE TABLE "invoices" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "chave_acesso" TEXT NOT NULL,
+    "access_key" TEXT NOT NULL,
     "emitted_at" DATETIME NOT NULL,
     "processed_at" DATETIME NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -18,14 +18,14 @@ CREATE TABLE "notas_fiscais" (
 );
 
 -- CreateTable
-CREATE TABLE "nota_fiscal_products" (
+CREATE TABLE "invoice_products" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "nota_fiscal_id" INTEGER NOT NULL,
+    "invoice_id" INTEGER NOT NULL,
     "product_id" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
-    CONSTRAINT "nota_fiscal_products_nota_fiscal_id_fkey" FOREIGN KEY ("nota_fiscal_id") REFERENCES "notas_fiscais" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "nota_fiscal_products_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "invoice_products_invoice_id_fkey" FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT "invoice_products_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -50,3 +50,6 @@ CREATE TABLE "store_products" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "stores_cnpj_key" ON "stores"("cnpj");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "invoices_access_key_key" ON "invoices"("access_key");

@@ -1,7 +1,8 @@
 import { publicProcedure, router } from '~/server/trpc'
 
-import * as nfceRoutes from './nfce'
+import * as invoiceRoutes from './invoice'
 import * as storeRoutes from './store'
+import * as productRoutes from './product'
 
 const appRouter = router({
   status: publicProcedure.query(() => {
@@ -12,8 +13,9 @@ const appRouter = router({
     }
   }),
 
+  product: router(productRoutes),
   store: router(storeRoutes),
-  nfce: router(nfceRoutes),
+  invoice: router(invoiceRoutes),
 })
 
 export default appRouter

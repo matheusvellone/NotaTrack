@@ -1,10 +1,10 @@
 import Promise from 'bluebird'
 import { prisma } from '~/database'
-import { ChaveAcessoNFCe } from '~/helpers/types'
+import { InvoiceAccessKey } from '~/helpers/types'
 import providers from '~/providers'
 
-export const query = async (chaveAcesso : ChaveAcessoNFCe) => {
-  const content = await providers.development.query(chaveAcesso)
+export const create = async (invoiceAccessKey : InvoiceAccessKey) => {
+  const content = await providers.development.query(invoiceAccessKey)
 
   await prisma.$transaction(async ($prisma) => {
     const store = await $prisma.store.upsert({
@@ -20,9 +20,9 @@ export const query = async (chaveAcesso : ChaveAcessoNFCe) => {
       },
     })
 
-    const notaFiscal = await $prisma.notaFiscal.create({
+    const invoice = await $prisma.invoice.create({
       data: {
-        chaveAcesso,
+        accessKey: content.accessKey,
         emittedAt: content.emittedAt,
         processedAt: new Date(),
       }
@@ -53,17 +53,14 @@ export const query = async (chaveAcesso : ChaveAcessoNFCe) => {
         })
       }
 
-      await $prisma.notaFiscalProducts.create({
+      await $prisma.invoiceProduct.create({
         data: {
-          notaFiscalId: notaFiscal.id,
+          invoiceId: invoice.id,
           productId: storeProduct.productId,
           price: product.value,
           quantity: product.quantity,
         },
       })
     })
-
   })
-
-  console.log(content)
 }

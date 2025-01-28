@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css'
 import { PropsWithChildren } from 'react'
+import { Notifications } from '@mantine/notifications'
+import RouterTransition from '~/components/RouterTransition'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -18,6 +20,8 @@ const RootLayout = ({ children }: PropsWithChildren) => {
         <MantineProvider
           defaultColorScheme="auto"
         >
+          <RouterTransition/>
+          <Notifications autoClose={5000} position='top-right'/>
           {children}
         </MantineProvider>
       </body>

@@ -26,30 +26,30 @@ model Store {
   storeProducts StoreProduct[]
 }
 
-model NotaFiscal {
-  @@map("notas_fiscais")
+model Invoice {
+  @@map("invoices")
 
   id Int @id @default(autoincrement())
-  chaveAcesso String @map("chave_acesso")
+  accessKey String @unique @map("access_key")
   emittedAt DateTime @map("emitted_at")
   processedAt DateTime @map("processed_at")
 
-  notaFiscalProducts NotaFiscalProducts[]
+  invoiceProducts InvoiceProduct[]
 
   createdAt DateTime @map("created_at") @default(now())
   updatedAt DateTime @map("updated_at") @updatedAt
 }
 
-model NotaFiscalProducts {
-  @@map("nota_fiscal_products")
+model InvoiceProduct {
+  @@map("invoice_products")
 
   id Int @id @default(autoincrement())
-  notaFiscalId Int @map("nota_fiscal_id")
+  invoiceId Int @map("invoice_id")
   productId Int @map("product_id")
   quantity Int
   price Int
 
-  notaFiscal NotaFiscal @relation(fields: [notaFiscalId], references: [id])
+  invoice Invoice @relation(fields: [invoiceId], references: [id])
   product Product @relation(fields: [productId], references: [id])
 }
 
@@ -69,7 +69,7 @@ model Product {
   updatedAt DateTime @map("updated_at") @updatedAt
 
   storeProducts StoreProduct[]
-  notaFiscalProducts NotaFiscalProducts[]
+  invoiceProducts InvoiceProduct[]
 }
 
 model StoreProduct {

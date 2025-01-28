@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { version } from '~/app'
 import { SHORT_HASH_VERSION } from '~/helpers/env'
-import { IconBuildingStore, IconPlus } from '@tabler/icons-react'
+import { IconBox, IconBuildingStore, IconInvoice, IconPlus } from '@tabler/icons-react'
 import ColorThemeSwitch from '~/components/ColorThemeSwitch'
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
@@ -49,16 +49,32 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             label='New invoice'
             leftSection={<IconPlus size={16}/>}
             component={Link}
-            active={pathname === '/'}
-            href='/'
+            active={pathname === '/invoices/new'}
+            href='/invoices/new'
             onClick={close}
           />
           <NavLink
             label='Stores'
             leftSection={<IconBuildingStore size={16}/>}
             component={Link}
-            active={pathname === '/store'}
-            href='/store'
+            active={pathname === '/stores'}
+            href='/stores'
+            onClick={close}
+          />
+          <NavLink
+            label='Invoices'
+            leftSection={<IconInvoice size={16}/>}
+            component={Link}
+            active={pathname === '/invoices'}
+            href='/invoices'
+            onClick={close}
+          />
+          <NavLink
+            label='Products'
+            leftSection={<IconBox size={16}/>}
+            component={Link}
+            active={pathname === '/products'}
+            href='/products'
             onClick={close}
           />
         </AppShell.Section>

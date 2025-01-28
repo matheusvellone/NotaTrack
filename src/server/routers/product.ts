@@ -1,19 +1,19 @@
 import { prisma } from '~/database'
 import { publicProcedure } from '../trpc'
+import { Product } from '~/entities'
 import { buildModelIdSchema } from '~/helpers/zod'
-import { Store } from '~/entities'
 
-const idRule = buildModelIdSchema<Store>()
+const idRule = buildModelIdSchema<Product>()
 
 export const list = publicProcedure
   .query(() => {
-    return prisma.store.findMany()
+    return prisma.product.findMany()
   })
 
 export const show = publicProcedure
   .input(idRule)
   .query(({ input }) => {
-    return prisma.store.findFirstOrThrow({
+    return prisma.product.findFirstOrThrow({
       where: {
         id: input,
       }

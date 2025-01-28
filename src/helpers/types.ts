@@ -1,3 +1,14 @@
 export declare const _brand: unique symbol
 
-export type ChaveAcessoNFCe = string & { [_brand]: 'ChaveAcessoNFCe' }
+export type CPF = string & { [_brand]: 'cpf' }
+export type CNPJ = string & { [_brand]: 'cnpj' }
+
+export type DocumentNumber = CPF | CNPJ
+
+export type ID<Model> = number & { [_brand]: Model }
+
+export type InvoiceAccessKey = string & { [_brand]: 'InvoiceAccessKey' }
+
+export const assertNever = (value: never) => {
+  throw new Error(`Unexpected value ${value}`)
+}
