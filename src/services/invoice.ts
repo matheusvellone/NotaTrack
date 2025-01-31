@@ -28,27 +28,54 @@ export const create = async (invoiceAccessKey : InvoiceAccessKey) => {
       },
     })
 
-    await Promise.each(content.products, async (product) => {
+    await Promise.each(content.products, async (invoiceProduct) => {
       let storeProduct = await $prisma.storeProduct.findFirst({
         where: {
           storeId: store.id,
-          code: product.code,
+          code: invoiceProduct.storeCode,
         },
       })
 
       if (!storeProduct) {
-        const createdProduct = await $prisma.product.create({
-          data: {
-            name: product.name,
-            unit: product.unit,
-          },
-        })
+        const getOrCreateProduct = async () => {
+          if (invoiceProduct.ean) {
+            const productByEan = await $prisma.product.findUnique({
+              where: {
+                ean: invoiceProduct.ean,
+              },
+            })
+
+            if (productByEan) {
+              return productByEan
+            }
+          }
+
+          const productByName = await $prisma.product.findFirst({
+            where: {
+              name: invoiceProduct.name,
+              unit: invoiceProduct.unit,
+            },
+          })
+
+          if (productByName) {
+            return productByName
+          }
+
+          return $prisma.product.create({
+            data: {
+              name: invoiceProduct.name,
+              unit: invoiceProduct.unit,
+              ean: invoiceProduct.ean,
+            },
+          })
+        }
+        const product = await getOrCreateProduct()
 
         storeProduct = await $prisma.storeProduct.create({
           data: {
-            code: product.code,
+            code: invoiceProduct.storeCode,
             storeId: store.id,
-            productId: createdProduct.id,
+            productId: product.id,
           },
         })
       }
@@ -57,8 +84,9 @@ export const create = async (invoiceAccessKey : InvoiceAccessKey) => {
         data: {
           invoiceId: invoice.id,
           productId: storeProduct.productId,
-          price: product.value,
-          quantity: product.quantity,
+          price: invoiceProduct.value,
+          quantity: invoiceProduct.quantity,
+          taxes: invoiceProduct.taxValue,
         },
       })
     })

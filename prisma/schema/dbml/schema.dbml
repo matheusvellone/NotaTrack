@@ -27,6 +27,7 @@ Table invoice_products {
   productId Int [not null]
   quantity Int [not null]
   price Int [not null]
+  taxes Int [not null]
   invoice invoices [not null]
   product products [not null]
 }
@@ -35,6 +36,7 @@ Table products {
   id Int [pk, increment]
   name String [not null]
   unit ProductUnit [not null]
+  ean String [unique]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   storeProducts store_products [not null]

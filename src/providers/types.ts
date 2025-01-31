@@ -2,7 +2,8 @@ import { ProductUnit } from '@prisma/client'
 import { InvoiceAccessKey } from '~/helpers/types'
 
 type Product = {
-  code: string
+  storeCode: string
+  ean: string | null
   name: string
   unit: ProductUnit
   quantity: number

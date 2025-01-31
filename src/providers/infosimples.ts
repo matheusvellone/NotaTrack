@@ -11,6 +11,7 @@ const infosimplesClient = axios.create({
 
 type Produto = {
   codigo: string
+  ean_comercial: string
   descricao: string
   unidade: string
   qtd: number
@@ -66,14 +67,15 @@ export const query: Query = async (chaveAcessoNFCe) => {
     storeCNPJ: response.data.emitente.cnpj,
     storeName: response.data.emitente.nome,
     emittedAt: DateTime.fromFormat(response.data.nfe.data_emissao, 'dd/MM/yyyy HH:mm:ssZZ').toJSDate(),
-    products: response.data.produtos.map((produto) => ({
-      code: produto.codigo,
-      name: produto.descricao,
-      unit: convertProductUnit(produto.unidade),
-      quantity: produto.qtd,
-      value: produto.normalizado_valor,
-      taxValue: Number(produto.tributos.replace(',', '.')) * 100,
-      unitComercialValue: Number(produto.valor_unitario_comercial.replace(',', '.')) * 100,
+    products: response.data.produtos.map((product) => ({
+      storeCode: product.codigo,
+      name: product.descricao,
+      ean: product.ean_comercial === 'SEM GTIN' ? null : product.ean_comercial,
+      unit: convertProductUnit(product.unidade),
+      quantity: product.qtd,
+      value: product.normalizado_valor,
+      taxValue: Number(product.tributos.replace(',', '.')) * 100,
+      unitComercialValue: Number(product.valor_unitario_comercial.replace(',', '.')) * 100,
     })),
   }
 }
