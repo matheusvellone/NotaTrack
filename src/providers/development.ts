@@ -1,7 +1,7 @@
 import { isLocal } from '~/helpers/env'
 import { Query } from './types'
 
-export const query: Query = async (chaveAcesso) => {
+export const query: Query = (chaveAcesso) => {
   if (!isLocal) {
     throw new Error('development provider is only available in local environment')
   }

@@ -1,7 +1,5 @@
 'use client'
 
-const Home = () => {
-  return null
-}
+const Home = () => {}
 
 export default Home

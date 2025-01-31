@@ -32,14 +32,18 @@ type ConsultaNFCEResult = {
 
 const convertProductUnit = (unit: string) => {
   switch (unit) {
-    case 'UN':
-      return ProductUnit.UN
-    case 'KG':
-      return ProductUnit.KG
-    case 'L':
-      return ProductUnit.L
-    default:
-      throw new Error(`Unknown unit: ${unit}`)
+  case 'UN': {
+    return ProductUnit.UN
+  }
+  case 'KG': {
+    return ProductUnit.KG
+  }
+  case 'L': {
+    return ProductUnit.L
+  }
+  default: {
+    throw new Error(`Unknown unit: ${unit}`)
+  }
   }
 }
 

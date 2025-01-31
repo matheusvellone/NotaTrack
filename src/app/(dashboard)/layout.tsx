@@ -13,7 +13,8 @@ import ColorThemeSwitch from '~/components/ColorThemeSwitch'
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   const pathname = usePathname()
-  const [opened, { toggle, close }] = useDisclosure();
+  const [mobileOpened, { toggle: toggleMobile, close: closeMobile }] = useDisclosure()
+  const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true)
 
   return (
     <AppShell
@@ -21,20 +22,16 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
       navbar={{
         width: 300,
         breakpoint: 'sm',
-        collapsed: { mobile: !opened },
+        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
       }}
       padding='md'
     >
       <AppShell.Header>
-        <Group h='100%' justify='space-between' px='md'>
-          <Group>
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom='sm'
-              size='sm'
-            />
-            <Title>Groceries Tracker</Title>
+        <Group h='100%' justify='space-between' px='md' wrap='nowrap'>
+          <Group wrap='nowrap'>
+            <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
+            <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
+            <Title lineClamp={1}>Groceries Tracker</Title>
           </Group>
           <ColorThemeSwitch/>
         </Group>
@@ -51,7 +48,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             component={Link}
             active={pathname === '/invoices/new'}
             href='/invoices/new'
-            onClick={close}
+            onClick={closeMobile}
           />
           <NavLink
             label='Stores'
@@ -59,7 +56,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             component={Link}
             active={pathname === '/stores'}
             href='/stores'
-            onClick={close}
+            onClick={closeMobile}
           />
           <NavLink
             label='Invoices'
@@ -67,7 +64,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             component={Link}
             active={pathname === '/invoices'}
             href='/invoices'
-            onClick={close}
+            onClick={closeMobile}
           />
           <NavLink
             label='Products'
@@ -75,7 +72,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             component={Link}
             active={pathname === '/products'}
             href='/products'
-            onClick={close}
+            onClick={closeMobile}
           />
         </AppShell.Section>
         <AppShell.Section>
@@ -86,7 +83,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
 
       <AppShell.Main>{children}</AppShell.Main>
     </AppShell>
-  );
+  )
 }
 
 export default trpc.withTRPC(DashboardLayout)

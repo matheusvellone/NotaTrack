@@ -25,7 +25,7 @@ export const create = async (invoiceAccessKey : InvoiceAccessKey) => {
         accessKey: content.accessKey,
         emittedAt: content.emittedAt,
         processedAt: new Date(),
-      }
+      },
     })
 
     await Promise.each(content.products, async (product) => {

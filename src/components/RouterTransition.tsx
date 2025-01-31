@@ -21,7 +21,7 @@ function load() {
 
   state = 'loading'
 
-  timer = setTimeout(function () {
+  timer = setTimeout(() => {
     startNavigationProgress()
   }, delay) // only show progress bar if it takes longer than the delay
 }
@@ -61,8 +61,8 @@ const RouterTransition = () => {
   }, [pathname, searchParams])
 
   useEffect(() => {
-    const originalFetch = window.fetch
-    window.fetch = async (...args) => {
+    const originalFetch = globalThis.fetch
+    globalThis.fetch = async (...args) => {
       onStartRequest()
 
       try {
@@ -74,7 +74,7 @@ const RouterTransition = () => {
     }
 
     return () => {
-      window.fetch = originalFetch
+      globalThis.fetch = originalFetch
     }
   }, [])
 
@@ -92,9 +92,9 @@ export const trpcNProgressLink: TRPCLink<AppRouter> = () => ({ next, op }) => ob
     next(value) {
       observer.next(value)
     },
-    error(err) {
+    error(error) {
       onFinishRequest()
-      observer.error(err)
+      observer.error(error)
     },
     complete() {
       onFinishRequest()

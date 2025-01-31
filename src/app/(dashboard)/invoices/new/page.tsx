@@ -19,7 +19,7 @@ const NewInvoice = () => {
         notificate: {
           error: 'Failed to create invoice',
         },
-      }
+      },
     },
   })
 

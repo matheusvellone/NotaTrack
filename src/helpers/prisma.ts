@@ -15,14 +15,18 @@ export const isUniqueConstraintError = (error: unknown, model?: ModelName, field
 
   const { meta } = error
 
-  // @ts-expect-error Definition doesn't help. If it's different it should throw anyway
+  // @ts-expect-error Type definition is not specific enough
   if (model && meta?.modelName !== model) {
     return false
   }
 
-  // @ts-expect-error Definition doesn't help. If it's different it should throw anyway
-  if (field && !meta?.target.includes(field)) {
-    return false
+  if (field) {
+    // @ts-expect-error Type definition is not specific enough
+    if (!meta || !meta.target || !Array.isArray(meta.target) || !meta.target.includes(field)) {
+      return false
+    }
+
+    return true
   }
 
   return true

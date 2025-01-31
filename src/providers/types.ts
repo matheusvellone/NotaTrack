@@ -19,4 +19,4 @@ export type NFCeQueryResult = {
   products: Product[]
 }
 
-export type Query = (accessKey: InvoiceAccessKey) => Promise<NFCeQueryResult>
+export type Query = (accessKey: InvoiceAccessKey) => NFCeQueryResult | Promise<NFCeQueryResult>

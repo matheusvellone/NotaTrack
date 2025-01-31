@@ -42,25 +42,25 @@ const notificateLink: TRPCLink<AppRouter> = () => ({ next, op }) => {
 
         observer.next(data)
       },
-      error(err) {
+      error(error) {
         const notificateError = () => {
           if (!notificate.error) {
             return
           }
 
-          if (!err.data?.errorCode) {
+          if (!error.data?.errorCode) {
             return
           }
 
           showNotification(NotificationType.ERROR, {
             title: notificate.error,
-            message: err.message,
+            message: error.message,
           })
         }
 
         notificateError()
 
-        observer.error(err)
+        observer.error(error)
       },
       complete() {
         observer.complete()
@@ -82,9 +82,9 @@ const formErrorsLink: TRPCLink<AppRouter> = () => ({ next, op }) => {
       next(value) {
         observer.next(value)
       },
-      error(err) {
-        if (err.data?.errorCode === invalid.input && err.data.validationErrors) {
-          const validationErrors = err.data.validationErrors
+      error(error) {
+        if (error.data?.errorCode === invalid.input && error.data.validationErrors) {
+          const validationErrors = error.data.validationErrors
             .reduce<Record<string, string>>((acc, issue) => {
               const key = issue.path.join('.')
               acc[key] = issue.message
@@ -94,7 +94,7 @@ const formErrorsLink: TRPCLink<AppRouter> = () => ({ next, op }) => {
 
           form.setErrors(validationErrors)
         }
-        observer.error(err)
+        observer.error(error)
       },
       complete() {
         observer.complete()

@@ -26,7 +26,7 @@ const defaultOptions: Record<NotificationType, Partial<NotificationData>> = {
     color: 'red',
     icon: <IconExclamationCircle />,
     loading: false,
-    autoClose: 10000,
+    autoClose: 10_000,
     withCloseButton: true,
   },
   [NotificationType.INFO]: {
@@ -52,8 +52,12 @@ const defaultOptions: Record<NotificationType, Partial<NotificationData>> = {
 }
 
 export const showNotification = (type: NotificationType, options: NotificationData) => {
-  const id = options.id ? options.id : randomId()
-  const allOptions = Object.assign({ id }, defaultOptions[type], options)
+  const id = options.id ?? randomId()
+  const allOptions = {
+    ...defaultOptions[type],
+    ...options,
+    id,
+  }
 
   notifications.show(allOptions)
 

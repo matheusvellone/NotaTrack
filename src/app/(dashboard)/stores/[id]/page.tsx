@@ -20,7 +20,7 @@ const StoreDetail = ({ params }: Props) => {
   }
 
   if (!showStore.isSuccess) {
-    return <div>Error: {showStore.error?.message}</div>
+    return <div>Error: {showStore.error.message}</div>
   }
 
   const store = showStore.data

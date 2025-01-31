@@ -16,6 +16,6 @@ export const show = publicProcedure
     return prisma.store.findFirstOrThrow({
       where: {
         id: input,
-      }
+      },
     })
   })

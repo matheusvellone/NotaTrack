@@ -10,5 +10,6 @@ export type ID<Model> = number & { [_brand]: Model }
 export type InvoiceAccessKey = string & { [_brand]: 'InvoiceAccessKey' }
 
 export const assertNever = (value: never) => {
+  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
   throw new Error(`Unexpected value ${value}`)
 }
