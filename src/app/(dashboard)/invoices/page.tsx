@@ -2,6 +2,7 @@
 
 import { Anchor, Group, Stack } from '@mantine/core'
 import Link from 'next/link'
+import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
 import { trpc } from '~/helpers/trpc'
 
 const InvoicesList = () => {
@@ -19,16 +20,19 @@ const InvoicesList = () => {
 
   return (
     <Stack>
-      {invoices.map((invoice) => (
-        <Group key={invoice.id}>
-          <Anchor
-            component={Link}
-            href={`/invoices/${invoice.id}`}
-          >
-            {invoice.accessKey}
-          </Anchor>
-        </Group>
-      ))}
+      {
+        invoices.map((invoice) => (
+          <Group key={invoice.id}>
+            <Anchor
+              component={Link}
+              href={`/invoices/${invoice.id}`}
+            >
+              {invoice.accessKey}
+            </Anchor>
+            <InvoiceStatusBadge status={invoice.status} />
+          </Group>
+        ))
+      }
     </Stack>
   )
 }

@@ -1,14 +1,16 @@
+import nextPlugin from '@next/eslint-plugin-next'
 import config from '@vellone/techsak/eslint.config.mjs'
-import { FlatCompat } from '@eslint/eslintrc'
-
-const compat = new FlatCompat({
-  baseDirectory: import.meta.dirname,
-})
 
 const eslintConfig = [
-  ...compat.config({
-    extends: ['next'],
-  }),
+  {
+    plugins: {
+      '@next/next': nextPlugin
+    },
+    rules: {
+      ...nextPlugin.configs.recommended.rules,
+      ...nextPlugin.configs['core-web-vitals'].rules,
+    }
+  },
   ...config,
 ]
 

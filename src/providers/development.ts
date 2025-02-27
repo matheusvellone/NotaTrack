@@ -10,7 +10,7 @@ export const query: Query = (chaveAcesso) => {
     accessKey: chaveAcesso,
     storeCNPJ: '51.272.474/0002-04',
     storeName: 'Comercial Ikeda Ltda',
-    emittedAt: new Date('2021-08-25T14:00:00Z'),
+    emissionDate: new Date('2021-08-25T14:00:00Z'),
     products: [
       {
         name: 'Pao Ikeda Pao France',
@@ -18,9 +18,9 @@ export const query: Query = (chaveAcesso) => {
         quantity: 0.38,
         storeCode: '166723',
         ean: null,
-        value: 528,
+        price: 528,
         taxValue: 37,
-        unitComercialValue: 139,
+        unitPrice: 139,
       },
       {
         name: 'Fgo File Peito Kg Re',
@@ -28,9 +28,9 @@ export const query: Query = (chaveAcesso) => {
         quantity: 0.838,
         storeCode: '2629',
         ean: null,
-        value: 2529,
+        price: 2529,
         taxValue: 114,
-        unitComercialValue: 3019,
+        unitPrice: 3019,
       },
       {
         name: 'Leit f Frutap 850g B',
@@ -38,9 +38,9 @@ export const query: Query = (chaveAcesso) => {
         quantity: 1,
         storeCode: '135950',
         ean: '7896862002060',
-        value: 1099,
+        price: 1099,
         taxValue: 46,
-        unitComercialValue: 1099,
+        unitPrice: 1099,
       },
     ],
   }

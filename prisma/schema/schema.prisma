@@ -26,13 +26,20 @@ model Store {
   storeProducts StoreProduct[]
 }
 
+enum InvoiceStatus {
+  PENDING
+  PROCESSED
+  ERROR
+}
+
 model Invoice {
   @@map("invoices")
 
   id Int @id @default(autoincrement())
   accessKey String @unique @map("access_key")
-  emittedAt DateTime @map("emitted_at")
-  processedAt DateTime @map("processed_at")
+  status InvoiceStatus
+  emissionDate DateTime? @map("emission_date")
+  processedAt DateTime? @map("processed_at")
 
   invoiceProducts InvoiceProduct[]
 
@@ -48,7 +55,8 @@ model InvoiceProduct {
   productId Int @map("product_id")
   quantity Int
   price Int
-  taxes Int
+  tax Int?
+  discount Int?
 
   invoice Invoice @relation(fields: [invoiceId], references: [id])
   product Product @relation(fields: [productId], references: [id])

@@ -51,19 +51,19 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             onClick={closeMobile}
           />
           <NavLink
-            label='Stores'
-            leftSection={<IconBuildingStore size={16}/>}
-            component={Link}
-            active={pathname === '/stores'}
-            href='/stores'
-            onClick={closeMobile}
-          />
-          <NavLink
             label='Invoices'
             leftSection={<IconInvoice size={16}/>}
             component={Link}
             active={pathname === '/invoices'}
             href='/invoices'
+            onClick={closeMobile}
+          />
+          <NavLink
+            label='Stores'
+            leftSection={<IconBuildingStore size={16}/>}
+            component={Link}
+            active={pathname === '/stores'}
+            href='/stores'
             onClick={closeMobile}
           />
           <NavLink

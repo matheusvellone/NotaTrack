@@ -66,7 +66,7 @@ export const query: Query = async (chaveAcessoNFCe) => {
     accessKey: chaveAcessoNFCe,
     storeCNPJ: response.data.emitente.cnpj,
     storeName: response.data.emitente.nome,
-    emittedAt: DateTime.fromFormat(response.data.nfe.data_emissao, 'dd/MM/yyyy HH:mm:ssZZ').toJSDate(),
+    emissionDate: DateTime.fromFormat(response.data.nfe.data_emissao, 'dd/MM/yyyy HH:mm:ssZZ').toJSDate(),
     products: response.data.produtos.map((product) => ({
       storeCode: product.codigo,
       name: product.descricao,

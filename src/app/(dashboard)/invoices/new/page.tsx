@@ -12,7 +12,7 @@ const NewInvoice = () => {
       nfceAccessKey: '',
     },
   })
-  const createInvoice = trpc.invoice.create.useMutation({
+  const processInvoice = trpc.invoice.process.useMutation({
     trpc: {
       context: {
         form,
@@ -24,7 +24,7 @@ const NewInvoice = () => {
   })
 
   const handleSubmit = async (values: typeof form.values) => {
-    await createInvoice.mutateAsync({
+    await processInvoice.mutateAsync({
       nfceAccessKey: values.nfceAccessKey,
     })
   }

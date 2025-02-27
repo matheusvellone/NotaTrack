@@ -1,23 +1,24 @@
 import { ProductUnit } from '@prisma/client'
+import { DateTime } from 'luxon'
 import { InvoiceAccessKey } from '~/helpers/types'
 
-type Product = {
+export type NFCeProduct = {
   storeCode: string
   ean: string | null
   name: string
   unit: ProductUnit
   quantity: number
-  value: number
-  taxValue: number
-  unitComercialValue: number
+  price: number
+  tax: number | null
+  discount: number | null
 }
 
 export type NFCeQueryResult = {
-  accessKey: InvoiceAccessKey
+  accessKey: string
   storeCNPJ: string
   storeName: string
-  emittedAt: Date
-  products: Product[]
+  emissionDate: DateTime
+  products: NFCeProduct[]
 }
 
 export type Query = (accessKey: InvoiceAccessKey) => NFCeQueryResult | Promise<NFCeQueryResult>

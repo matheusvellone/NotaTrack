@@ -1,94 +1,134 @@
+import { InvoiceStatus } from '@prisma/client'
 import Promise from 'bluebird'
+import { DateTime } from 'luxon'
 import { prisma } from '~/database'
+import { Invoice } from '~/entities'
 import { InvoiceAccessKey } from '~/helpers/types'
 import providers from '~/providers'
 
-export const create = async (invoiceAccessKey : InvoiceAccessKey) => {
-  const content = await providers.development.query(invoiceAccessKey)
+export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
+  const invoice = await prisma.invoice.upsert({
+    where: {
+      accessKey: invoiceAccessKey,
+      status: InvoiceStatus.PENDING,
+    },
+    create: {
+      accessKey: invoiceAccessKey,
+      status: InvoiceStatus.PENDING,
+    },
+    update: {},
+  })
 
-  await prisma.$transaction(async ($prisma) => {
-    const store = await $prisma.store.upsert({
-      where: {
-        cnpj: content.storeCNPJ,
-      },
-      create: {
-        name: content.storeName,
-        cnpj: content.storeCNPJ,
-      },
-      update: {
-        name: content.storeName,
-      },
-    })
+  try {
+    const content = await providers.raw.query(invoiceAccessKey)
 
-    const invoice = await $prisma.invoice.create({
-      data: {
-        accessKey: content.accessKey,
-        emittedAt: content.emittedAt,
-        processedAt: new Date(),
-      },
-    })
+    if (content.accessKey !== invoiceAccessKey) {
+      throw new Error('InvoiceAccessKey returned from provider does not match the requested InvoiceAccessKey')
+    }
 
-    await Promise.each(content.products, async (invoiceProduct) => {
-      let storeProduct = await $prisma.storeProduct.findFirst({
+    await prisma.$transaction(async ($prisma) => {
+      const store = await $prisma.store.upsert({
         where: {
-          storeId: store.id,
-          code: invoiceProduct.storeCode,
+          cnpj: content.storeCNPJ,
         },
+        create: {
+          name: content.storeName,
+          cnpj: content.storeCNPJ,
+        },
+        update: {},
       })
 
-      if (!storeProduct) {
-        const getOrCreateProduct = async () => {
-          if (invoiceProduct.ean) {
-            const productByEan = await $prisma.product.findUnique({
+      await Promise.each(content.products, async (invoiceProduct) => {
+        let storeProduct = await $prisma.storeProduct.findFirst({
+          where: {
+            storeId: store.id,
+            code: invoiceProduct.storeCode,
+          },
+        })
+
+        if (!storeProduct) {
+          const getOrCreateProduct = async () => {
+            if (invoiceProduct.ean) {
+              const productByEan = await $prisma.product.findUnique({
+                where: {
+                  ean: invoiceProduct.ean,
+                },
+              })
+
+              if (productByEan) {
+                return productByEan
+              }
+            }
+
+            const productByName = await $prisma.product.findFirst({
               where: {
-                ean: invoiceProduct.ean,
+                name: invoiceProduct.name,
+                unit: invoiceProduct.unit,
               },
             })
 
-            if (productByEan) {
-              return productByEan
+            if (productByName) {
+              return productByName
             }
+
+            return $prisma.product.create({
+              data: {
+                name: invoiceProduct.name,
+                unit: invoiceProduct.unit,
+                ean: invoiceProduct.ean,
+              },
+            })
           }
+          const product = await getOrCreateProduct()
 
-          const productByName = await $prisma.product.findFirst({
-            where: {
-              name: invoiceProduct.name,
-              unit: invoiceProduct.unit,
-            },
-          })
-
-          if (productByName) {
-            return productByName
-          }
-
-          return $prisma.product.create({
+          storeProduct = await $prisma.storeProduct.create({
             data: {
-              name: invoiceProduct.name,
-              unit: invoiceProduct.unit,
-              ean: invoiceProduct.ean,
+              code: invoiceProduct.storeCode,
+              storeId: store.id,
+              productId: product.id,
             },
           })
         }
-        const product = await getOrCreateProduct()
 
-        storeProduct = await $prisma.storeProduct.create({
+        await $prisma.invoiceProduct.create({
           data: {
-            code: invoiceProduct.storeCode,
-            storeId: store.id,
-            productId: product.id,
+            invoiceId: invoice.id,
+            productId: storeProduct.productId,
+            price: invoiceProduct.price,
+            quantity: invoiceProduct.quantity,
+            tax: invoiceProduct.tax,
+            discount: invoiceProduct.discount,
           },
         })
-      }
+      })
 
-      await $prisma.invoiceProduct.create({
+      await $prisma.invoice.update({
+        where: {
+          id: invoice.id,
+        },
         data: {
-          invoiceId: invoice.id,
-          productId: storeProduct.productId,
-          price: invoiceProduct.value,
-          quantity: invoiceProduct.quantity,
-          taxes: invoiceProduct.taxValue,
+          status: InvoiceStatus.PROCESSED,
+          processedAt: DateTime.now().toJSDate(),
         },
       })
     })
+  } catch (error) {
+    await prisma.invoice.update({
+      where: {
+        id: invoice.id,
+      },
+      data: {
+        status: InvoiceStatus.ERROR,
+      },
+    })
+    throw error
+  }
+}
+
+export const show = async (id: Invoice['id']) => {
+  return prisma.invoice.findUniqueOrThrow({
+    where: {
+      id,
+    },
   })
 }

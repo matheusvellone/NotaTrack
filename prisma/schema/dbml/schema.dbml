@@ -14,8 +14,9 @@ Table stores {
 Table invoices {
   id Int [pk, increment]
   accessKey String [unique, not null]
-  emittedAt DateTime [not null]
-  processedAt DateTime [not null]
+  status InvoiceStatus [not null]
+  emissionDate DateTime
+  processedAt DateTime
   invoiceProducts invoice_products [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
@@ -27,7 +28,8 @@ Table invoice_products {
   productId Int [not null]
   quantity Int [not null]
   price Int [not null]
-  taxes Int [not null]
+  tax Int
+  discount Int
   invoice invoices [not null]
   product products [not null]
 }
@@ -53,6 +55,12 @@ Table store_products {
   indexes {
     (storeId, code) [pk]
   }
+}
+
+Enum InvoiceStatus {
+  PENDING
+  PROCESSED
+  ERROR
 }
 
 Enum ProductUnit {

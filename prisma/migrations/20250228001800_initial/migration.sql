@@ -11,8 +11,9 @@ CREATE TABLE "stores" (
 CREATE TABLE "invoices" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "access_key" TEXT NOT NULL,
-    "emitted_at" DATETIME NOT NULL,
-    "processed_at" DATETIME NOT NULL,
+    "status" TEXT NOT NULL,
+    "emission_date" DATETIME,
+    "processed_at" DATETIME,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL
 );
@@ -24,6 +25,8 @@ CREATE TABLE "invoice_products" (
     "product_id" INTEGER NOT NULL,
     "quantity" INTEGER NOT NULL,
     "price" INTEGER NOT NULL,
+    "tax" INTEGER,
+    "discount" INTEGER,
     CONSTRAINT "invoice_products_invoice_id_fkey" FOREIGN KEY ("invoice_id") REFERENCES "invoices" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT "invoice_products_product_id_fkey" FOREIGN KEY ("product_id") REFERENCES "products" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
@@ -33,6 +36,7 @@ CREATE TABLE "products" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "name" TEXT NOT NULL,
     "unit" TEXT NOT NULL,
+    "ean" TEXT,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL
 );
@@ -53,3 +57,6 @@ CREATE UNIQUE INDEX "stores_cnpj_key" ON "stores"("cnpj");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "invoices_access_key_key" ON "invoices"("access_key");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "products_ean_key" ON "products"("ean");
