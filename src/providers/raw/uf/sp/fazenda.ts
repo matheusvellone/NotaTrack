@@ -24,7 +24,7 @@ const fazenda: UFData = {
     const accessKey = $('.chave').text().replaceAll(/\s+/g, '')
     const storeName = $('#u20').text().trim()
     const storeCNPJ = $('.text:contains("CNPJ:")').text().replace(/CNPJ:\s*/, '').replaceAll(/\D/g, '').trim()
-    const emissionDateText = $('strong:contains("Emissão:")').parent().text().match(/Emissão:\s*(.*?) - Via Consumidor/)?.[1]
+    const emissionDateText = $('strong:contains("Emissão:")').parent().text().match(/Emissão:\s*(.*?)\s+-\s+Via Consumidor/)?.[1]
 
     if (!emissionDateText) {
       throw new Error('Emission date not found')

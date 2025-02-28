@@ -37,7 +37,7 @@
     "react-imask": "^7.6.1",
     "selenium-webdriver": "^4.29.0",
     "tough-cookie": "^5.1.1",
-    "user-agents": "^1.1.463",
+    "user-agents": "^1.1.464",
     "zod": "^3.24.2"
   },
   "devDependencies": {

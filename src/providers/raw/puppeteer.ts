@@ -3,7 +3,7 @@ import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 import userAgent from 'user-agents'
 
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { isLocal, isProduction } from '~/helpers/env'
+import { isProduction } from '~/helpers/env'
 import { UFData } from './types'
 import { InvoiceAccessKey } from '~/helpers/types'
 import { Promise } from 'bluebird'
@@ -12,9 +12,9 @@ const {
   TWO_CAPTCHA_API_KEY,
 } = process.env
 
-// puppeteer.use(StealthPlugin())
+puppeteer.use(StealthPlugin())
 
-const automaticCaptchaSolving = !!TWO_CAPTCHA_API_KEY
+const automaticCaptchaSolving = isProduction && !!TWO_CAPTCHA_API_KEY
 
 if (automaticCaptchaSolving) {
   puppeteer.use(
@@ -28,7 +28,7 @@ if (automaticCaptchaSolving) {
 const openInvoice = async (invoiceAccessKey: InvoiceAccessKey, info: UFData) => {
   const browser = await puppeteer.launch({
     acceptInsecureCerts: true,
-    headless: !isLocal,
+    headless: !automaticCaptchaSolving,
     timeout: 0,
   })
   const page = await browser.newPage()
