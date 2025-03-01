@@ -1,0 +1,5 @@
+export const CPF_MASK = '000.000.000-00'
+
+export const CNPJ_MASK = '00.000.000/0000-00'
+
+export const NFE_MASK = '0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000'

@@ -11,11 +11,13 @@ CREATE TABLE "stores" (
 CREATE TABLE "invoices" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "access_key" TEXT NOT NULL,
+    "store_id" INTEGER,
     "status" TEXT NOT NULL,
     "emission_date" DATETIME,
     "processed_at" DATETIME,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL,
+    CONSTRAINT "invoices_store_id_fkey" FOREIGN KEY ("store_id") REFERENCES "stores" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable

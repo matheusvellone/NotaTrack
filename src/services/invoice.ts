@@ -4,23 +4,28 @@ import { DateTime } from 'luxon'
 import { prisma } from '~/database'
 import { Invoice } from '~/entities'
 import { InvoiceAccessKey } from '~/helpers/types'
-import providers from '~/providers'
+import { importInvoicesFromUF, processInvoice } from '~/invoiceProvider'
+import { UF } from '~/helpers/uf'
 
 export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
   const invoice = await prisma.invoice.upsert({
     where: {
       accessKey: invoiceAccessKey,
-      status: InvoiceStatus.PENDING,
+      status: {
+        not: InvoiceStatus.PROCESSED,
+      },
     },
     create: {
       accessKey: invoiceAccessKey,
       status: InvoiceStatus.PENDING,
     },
-    update: {},
+    update: {
+      status: InvoiceStatus.PENDING,
+    },
   })
 
   try {
-    const content = await providers.raw.query(invoiceAccessKey)
+    const content = await processInvoice(invoiceAccessKey)
 
     if (content.accessKey !== invoiceAccessKey) {
       throw new Error('InvoiceAccessKey returned from provider does not match the requested InvoiceAccessKey')
@@ -108,7 +113,9 @@ export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
         },
         data: {
           status: InvoiceStatus.PROCESSED,
+          emissionDate: content.emissionDate,
           processedAt: DateTime.now().toJSDate(),
+          storeId: store.id,
         },
       })
     })
@@ -130,5 +137,32 @@ export const show = async (id: Invoice['id']) => {
     where: {
       id,
     },
+  })
+}
+
+type UserInput = {
+  username: string
+  password: string
+}
+export const importInvoices = async (input: UserInput, uf: UF) => {
+  const invoices = await importInvoicesFromUF(input, uf)
+
+  const alreadyImported = await prisma.invoice.findMany({
+    where: {
+      accessKey: {
+        in: invoices,
+      },
+    },
+  })
+
+  const alreadyImportedAccessKeys = new Set(alreadyImported.map((invoice) => invoice.accessKey))
+
+  const toCreate = invoices.filter((accessKey) => !alreadyImportedAccessKeys.has(accessKey))
+
+  await prisma.invoice.createMany({
+    data: toCreate.map((accessKey) => ({
+      accessKey,
+      status: InvoiceStatus.PENDING,
+    })),
   })
 }

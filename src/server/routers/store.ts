@@ -12,10 +12,10 @@ export const list = publicProcedure
 
 export const show = publicProcedure
   .input(idRule)
-  .query(({ input }) => {
-    return prisma.store.findFirstOrThrow({
+  .query(async ({ input }) => {
+    return await prisma.store.findFirstOrThrow({
       where: {
         id: input,
       },
-    })
+    }) as Store
   })

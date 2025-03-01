@@ -1,45 +1,47 @@
 'use client'
 
-import { Stack } from '@mantine/core'
-import { useForm } from '@mantine/form'
-import MaskedInput from '~/components/MaskedInput'
-import SubmitButton from '~/components/SubmitButton'
-import { trpc } from '~/helpers/trpc'
+import { Button, Group } from '@mantine/core'
+import { modals } from '@mantine/modals'
+import InvoiceImporter from '~/components/InvoiceImporter'
+import ManualInvoiceImporter from '~/components/ManualInvoiceImporter'
 
 const NewInvoice = () => {
-  const form = useForm({
-    initialValues: {
-      nfceAccessKey: '',
-    },
-  })
-  const processInvoice = trpc.invoice.process.useMutation({
-    trpc: {
-      context: {
-        form,
-        notificate: {
-          error: 'Failed to create invoice',
-        },
-      },
-    },
-  })
+  const openImportModal = () => {
+    const modalId = modals.open({
+      title: 'Importar notas fiscais',
+      children: (
+        <InvoiceImporter
+          onImport={() => {
+            modals.close(modalId)
+          }}
+        />
+      ),
+    })
+  }
 
-  const handleSubmit = async (values: typeof form.values) => {
-    await processInvoice.mutateAsync({
-      nfceAccessKey: values.nfceAccessKey,
+  const openManualAddModal = () => {
+    const modalId = modals.open({
+      title: 'Adicionar nota fiscal manualmente',
+      children: (
+        <ManualInvoiceImporter
+          onImport={() => {
+            modals.close(modalId)
+          }}
+        />
+      ),
     })
   }
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
-      <Stack>
-        <MaskedInput
-          label='NFC-e Access Key'
-          mask='0000 0000 0000 0000 0000 0000 0000 0000 0000 0000 0000'
-          {...form.getInputProps('nfceAccessKey')}
-        />
-        <SubmitButton form={form} label='Create'/>
-      </Stack>
-    </form>
+    <Group>
+      <Button onClick={openImportModal}>
+        Importar notas fiscais automaticamente
+      </Button>
+
+      <Button onClick={openManualAddModal}>
+        Adicionar nota fiscal manualmente
+      </Button>
+    </Group>
   )
 }
 

@@ -1,14 +1,17 @@
 import { DateTime } from 'luxon'
-import { UFData } from '../../types'
-import { NFCeProduct } from '~/providers/types'
+import { ProcessInvoice } from '../../../types'
+import { ProcessInvoiceOutputProduct } from '~/invoiceProvider/types'
 import { ProductUnit } from '@prisma/client'
+import { openPage, solveCaptcha } from '~/helpers/puppeteer'
+import * as cheerio from 'cheerio'
+import { Promise } from 'bluebird'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit?.includes('KG')) {
     return ProductUnit.KG
   }
 
-  if (unit?.includes('UND')) {
+  if (unit?.includes('UN')) {
     return ProductUnit.UN
   }
 
@@ -28,18 +31,29 @@ const parseUnit = (unit: string | undefined) => {
 }
 
 // 35250293209765066053590013031990134078741533
-const satsp: UFData = {
-  url: 'https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx',
-  codeInputSelector: '#conteudo_txtChaveAcesso',
-  confirmSelector: '#conteudo_btnConsultar',
-  parseInvoice: ($) => {
+const satsp: ProcessInvoice = async (invoiceAccessKey) => {
+  const { browser, page } = await openPage('https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx')
+
+  try {
+    await page.click('#conteudo_txtChaveAcesso')
+    await Promise.delay(100)
+    await page.locator('#conteudo_txtChaveAcesso').fill(invoiceAccessKey)
+
+    await solveCaptcha(page)
+
+    await page.locator('#conteudo_btnConsultar').click()
+    await page.waitForNavigation({ waitUntil: 'networkidle0' })
+
+    const pageContent = await page.content()
+    const $ = cheerio.load(pageContent)
+
     const accessKey = $('#conteudo_lblIdCfe').text().replaceAll(/\s+/g, '')
-    const storeName = $('#conteudo_lblNomeFantasiaEmitente').text().trim()
+    const storeName = $('#conteudo_lblNomeFantasiaEmitente').text().trim() || $('#conteudo_lblNomeEmitente').text().trim()
     const storeCNPJ = $('#conteudo_lblCnpjEmitente').text().replaceAll(/\D/g, '')
     const emissionDateText = $('#conteudo_lblDataEmissao').text().trim()
-    const emissionDate = DateTime.fromFormat(emissionDateText, 'dd/MM/yyyy - HH:mm:ss')
+    const emissionDate = DateTime.fromFormat(emissionDateText, 'dd/MM/yyyy - HH:mm:ss').toJSDate()
 
-    const products: Record<string, NFCeProduct> = {}
+    const products: Record<string, ProcessInvoiceOutputProduct> = {}
 
     $('#tableItens tbody tr').each((index, el) => {
       if (index % 2 === 1) {
@@ -54,10 +68,10 @@ const satsp: UFData = {
       const storeCode = productRaw.find('td:nth-child(2)').text().trim()
       const name = productRaw.find('td:nth-child(3)').text().trim()
       const unit = parseUnit(productRaw.find('td:nth-child(5)').text().trim())
-      const price = Number(productRaw.find('td:nth-child(6)').text().trim().replace(',', '.').replace('X', '')) * 100
+      const price = Math.round(Number(productRaw.find('td:nth-child(6)').text().trim().replace(',', '.').replace('X', '')) * 100)
       const quantity = Number(productRaw.find('td:nth-child(4)').text().trim().replace(',', '.'))
-      const tax = totalTax / quantity
-      const discount = totalDiscount / quantity
+      const tax = Math.round(totalTax / quantity)
+      const discount = Math.round(totalDiscount / quantity)
 
       if (products[storeCode]) {
         products[storeCode].quantity += quantity
@@ -85,7 +99,9 @@ const satsp: UFData = {
       emissionDate,
       products: Object.values(products),
     }
-  },
+  } finally {
+    await browser.close()
+  }
 }
 
 export default satsp

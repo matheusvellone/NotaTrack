@@ -1,5 +1,6 @@
 import { Badge } from '@mantine/core'
 import { InvoiceStatus } from '@prisma/client'
+import { assertNever } from '~/helpers/types'
 
 type Props = {
   status: InvoiceStatus
@@ -8,19 +9,24 @@ type Props = {
 const InvoiceStatusBadge = ({ status }: Props) => {
   if (status === InvoiceStatus.PROCESSED) {
     return (
-      <Badge color='green'>Processed</Badge>
+      <Badge color='green'>Processado</Badge>
     )
   }
 
   if (status === InvoiceStatus.ERROR) {
     return (
-      <Badge color='red'>Error</Badge>
+      <Badge color='red'>Erro</Badge>
     )
   }
 
-  return (
-    <Badge color='gray'>Pending</Badge>
-  )
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (status === InvoiceStatus.PENDING) {
+    return (
+      <Badge color='gray'>Pendente</Badge>
+    )
+  }
+
+  return assertNever(status)
 }
 
 export default InvoiceStatusBadge

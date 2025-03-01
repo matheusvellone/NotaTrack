@@ -9,14 +9,17 @@ Table stores {
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
   storeProducts store_products [not null]
+  invoices invoices [not null]
 }
 
 Table invoices {
   id Int [pk, increment]
   accessKey String [unique, not null]
+  storeId Int
   status InvoiceStatus [not null]
   emissionDate DateTime
   processedAt DateTime
+  store stores
   invoiceProducts invoice_products [not null]
   createdAt DateTime [default: `now()`, not null]
   updatedAt DateTime [not null]
@@ -68,6 +71,8 @@ Enum ProductUnit {
   KG
   L
 }
+
+Ref: invoices.storeId > stores.id
 
 Ref: invoice_products.invoiceId > invoices.id
 

@@ -4,6 +4,7 @@ import '@mantine/core/styles.css'
 import { PropsWithChildren } from 'react'
 import { Notifications } from '@mantine/notifications'
 import RouterTransition from '~/components/RouterTransition'
+import { ModalsProvider } from '@mantine/modals'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -22,7 +23,9 @@ const RootLayout = ({ children }: PropsWithChildren) => {
         >
           <RouterTransition/>
           <Notifications autoClose={5000} position='top-right'/>
-          {children}
+          <ModalsProvider>
+            {children}
+          </ModalsProvider>
         </MantineProvider>
       </body>
     </html>

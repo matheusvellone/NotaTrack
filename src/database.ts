@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { isLocal, isTest } from '~/helpers/env'
+import { debugEnabled, isProduction } from '~/helpers/env'
 
-const logQueries = isLocal && !isTest
+const logQueries = debugEnabled && !isProduction
 
 const prismaClientSingleton = () => {
   const prismaInstance = new PrismaClient({
@@ -19,6 +19,6 @@ const globalForPrisma = globalThis as unknown as {
 
 export const prisma = globalForPrisma.prisma ?? prismaClientSingleton()
 
-if (process.env.NODE_ENV !== 'production') {
+if (!isProduction) {
   globalForPrisma.prisma = prisma
 }
