@@ -53,7 +53,8 @@ const fazenda: ProcessInvoice = async (invoiceAccessKey) => {
         name: productRaw.find('.txtTit').first().text().trim(),
         unit: parseUnit(productRaw.find('.RUN').text().match(/UN:\s*(.*)/)?.[1]?.trim()),
         quantity: Number(productRaw.find('.Rqtd').text().match(/Qtde.:\s*(.*)/)?.[1]?.replace(',', '.')),
-        price: Number(productRaw.find('.RvlUnit').text().match(/Vl. Unit.:\s*(.*)/)?.[1]?.replace(',', '.')) * 100,
+        unitPrice: Math.round(Number(productRaw.find('.RvlUnit').text().match(/Vl. Unit.:\s*(.*)/)?.[1]?.replace(',', '.')) * 100),
+        price: Math.round(Number(productRaw.find('td:last').text().match(/Vl. Total\s*(.*)/)?.[1]?.replace(',', '.')) * 100),
         tax: null,
         discount: null,
       }

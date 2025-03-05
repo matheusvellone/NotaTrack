@@ -8,6 +8,7 @@ export type ProcessInvoiceOutputProduct = {
   unit: ProductUnit
   quantity: number
   price: number
+  unitPrice: number
   tax: number | null
   discount: number | null
 }

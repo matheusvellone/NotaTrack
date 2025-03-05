@@ -68,7 +68,8 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
       const storeCode = productRaw.find('td:nth-child(2)').text().trim()
       const name = productRaw.find('td:nth-child(3)').text().trim()
       const unit = parseUnit(productRaw.find('td:nth-child(5)').text().trim())
-      const price = Math.round(Number(productRaw.find('td:nth-child(6)').text().trim().replace(',', '.').replace('X', '')) * 100)
+      const unitPrice = Math.round(Number(productRaw.find('td:nth-child(6)').text().trim().replace(',', '.').replace('X', '')) * 100)
+      const price = Math.round(Number(productRaw.find('td:nth-child(8)').text().trim().replace(',', '.')) * 100)
       const quantity = Number(productRaw.find('td:nth-child(4)').text().trim().replace(',', '.'))
       const tax = Math.round(totalTax / quantity)
       const discount = Math.round(totalDiscount / quantity)
@@ -77,6 +78,7 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
         products[storeCode].quantity += quantity
         products[storeCode].tax = Math.round((products[storeCode].tax || 0 + tax) / 2)
         products[storeCode].discount = Math.round((products[storeCode].discount || 0 + discount) / 2)
+        products[storeCode].unitPrice = Math.round((products[storeCode].unitPrice + unitPrice) / 2)
         products[storeCode].price = Math.round((products[storeCode].price + price) / 2)
       } else {
         products[storeCode] = {
@@ -85,6 +87,7 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
           name,
           unit,
           quantity,
+          unitPrice,
           price,
           tax,
           discount,

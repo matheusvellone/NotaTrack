@@ -66,6 +66,7 @@ const schema = z.object({
     unit: z.nativeEnum(ProductUnit),
     quantity: z.number().positive(),
     price: z.number().int().positive(),
+    unitPrice: z.number().int().positive(),
     tax: z.number().int().nullable(),
     discount: z.number().int().nullable(),
   })).min(1),
@@ -93,7 +94,7 @@ const processInvoice = async (chaveAcessoNFCe: InvoiceAccessKey) => {
   if (error) {
     logger.error({
       content,
-      error,
+      error: error.issues,
     }, 'Invoice processed')
 
     throw new Error('Invalid invoice content')

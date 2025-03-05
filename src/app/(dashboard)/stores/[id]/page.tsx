@@ -18,7 +18,7 @@ const StoreDetail = ({ params }: Props) => {
   const {
     error: validationError,
     data: parsedId,
-  } = storeSchema.id.safeParse(id)
+  } = storeSchema.id.safeParse(Number(id))
 
   if (validationError) {
     return validationError.toString()

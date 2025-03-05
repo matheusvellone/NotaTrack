@@ -56,8 +56,9 @@ model InvoiceProduct {
   id Int @id @default(autoincrement())
   invoiceId Int @map("invoice_id")
   productId Int @map("product_id")
-  quantity Int
+  quantity Float
   price Int
+  unitPrice Int @map("unit_price")
   tax Int?
   discount Int?
 

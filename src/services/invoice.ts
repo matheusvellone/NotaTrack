@@ -2,7 +2,7 @@ import { InvoiceStatus } from '@prisma/client'
 import Promise from 'bluebird'
 import { DateTime } from 'luxon'
 import { prisma } from '~/database'
-import { Invoice } from '~/entities'
+import { Invoice, InvoiceProduct, Product } from '~/entities'
 import { InvoiceAccessKey } from '~/helpers/types'
 import { importInvoicesFromUF, processInvoice } from '~/invoiceProvider'
 import { UF } from '~/helpers/uf'
@@ -100,6 +100,7 @@ export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
             invoiceId: invoice.id,
             productId: storeProduct.productId,
             price: invoiceProduct.price,
+            unitPrice: invoiceProduct.unitPrice,
             quantity: invoiceProduct.quantity,
             tax: invoiceProduct.tax,
             discount: invoiceProduct.discount,
@@ -133,11 +134,22 @@ export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
 }
 
 export const show = async (id: Invoice['id']) => {
-  return prisma.invoice.findUniqueOrThrow({
+  return await prisma.invoice.findUniqueOrThrow({
     where: {
       id,
     },
-  })
+    include: {
+      invoiceProducts: {
+        include: {
+          product: true,
+        },
+      },
+    },
+  }) as Invoice & {
+    invoiceProducts: Array<InvoiceProduct & {
+      product: Product
+    }>
+  }
 }
 
 type UserInput = {

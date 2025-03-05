@@ -1,8 +1,9 @@
 'use client'
 
-import { Button, Group, Stack, Text } from '@mantine/core'
+import { Button, Group, SimpleGrid, Stack, Text } from '@mantine/core'
 import { InvoiceStatus } from '@prisma/client'
 import { use } from 'react'
+import Amount from '~/components/Amount'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
 import { trpc } from '~/helpers/trpc'
@@ -20,7 +21,7 @@ const InvoiceDetail = ({ params }: Props) => {
   const {
     error: validationError,
     data: parsedId,
-  } = invoiceSchema.id.safeParse(id)
+  } = invoiceSchema.id.safeParse(Number(id))
 
   if (validationError) {
     return validationError.toString()
@@ -85,6 +86,21 @@ const InvoiceDetail = ({ params }: Props) => {
           ) : '-'
         }
       </Group>
+
+      <SimpleGrid cols={{ xs: 1, sm: 3, md: 6 }}>
+        {
+          invoice.invoiceProducts.map((invoiceProduct) => (
+            <Stack key={invoiceProduct.id}>
+              <Text>{invoiceProduct.product.name}</Text>
+              <Text>{invoiceProduct.quantity}x {invoiceProduct.product.unit}</Text>
+              <Text>{invoiceProduct.quantity}x <Amount span>{invoiceProduct.unitPrice}</Amount></Text>
+              <Amount>{invoiceProduct.price}</Amount>
+              <Amount>{invoiceProduct.discount}</Amount>
+              <Amount>{invoiceProduct.tax}</Amount>
+            </Stack>
+          ))
+        }
+      </SimpleGrid>
     </Stack>
   )
 }

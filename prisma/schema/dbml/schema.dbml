@@ -29,8 +29,9 @@ Table invoice_products {
   id Int [pk, increment]
   invoiceId Int [not null]
   productId Int [not null]
-  quantity Int [not null]
+  quantity Float [not null]
   price Int [not null]
+  unitPrice Int [not null]
   tax Int
   discount Int
   invoice invoices [not null]

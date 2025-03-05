@@ -22,6 +22,7 @@ const NewInvoice = () => {
   const openManualAddModal = () => {
     const modalId = modals.open({
       title: 'Adicionar nota fiscal manualmente',
+      size: 'lg',
       children: (
         <ManualInvoiceImporter
           onImport={() => {
