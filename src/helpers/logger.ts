@@ -1,9 +1,10 @@
 import pino from 'pino'
+import { debugEnabled } from './env'
 
 const loggerOptions = {
   messageKey: 'message',
   errorKey: 'error',
-  level: 'trace',
+  level: debugEnabled ? 'debug' : 'info',
   formatters: {
     level: (label) => ({
       level: label,

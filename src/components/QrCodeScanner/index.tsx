@@ -3,29 +3,25 @@
 import { Box } from '@mantine/core'
 import QrScanner from 'qr-scanner'
 import { useEffect, useRef } from 'react'
+import { getNotificationErrorHandler } from '~/helpers/notifications'
 
 type Props = {
   onScan: (data: string) => void
-  onError: () => void
 }
 
 const QrCodeScanner = ({
   onScan,
-  onError,
 }: Props) => {
   const scanner = useRef<QrScanner>(null)
   const videoEl = useRef<HTMLVideoElement>(null)
 
   const onDecode = ({ data }: QrScanner.ScanResult) => {
-    console.log(data)
     onScan(data)
   }
 
   useEffect(() => {
-    console.log('effect', videoEl.current, scanner.current)
     if (videoEl.current && !scanner.current) {
       scanner.current = new QrScanner(videoEl.current, onDecode, {
-        onDecodeError: console.log,
         preferredCamera: 'environment',
         // 🖼 This will help us position our "QrFrame.svg" so that user can only scan when qr code is put in between our QrFrame.svg.
         highlightScanRegion: true,
@@ -34,10 +30,7 @@ const QrCodeScanner = ({
       })
 
       scanner.current.start()
-        .catch((error) => {
-          console.error(error)
-          onError()
-        })
+        .catch(getNotificationErrorHandler('Erro ao iniciar leitor de QR Code'))
     }
 
     // return () => {

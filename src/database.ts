@@ -1,11 +1,9 @@
 import { PrismaClient } from '@prisma/client'
 import { debugEnabled, isProduction } from '~/helpers/env'
 
-const logQueries = debugEnabled && !isProduction
-
 const prismaClientSingleton = () => {
   const prismaInstance = new PrismaClient({
-    log: logQueries ? ['query'] : undefined,
+    log: debugEnabled ? ['query'] : undefined,
   })
 
   return prismaInstance

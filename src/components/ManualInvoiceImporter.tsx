@@ -1,5 +1,5 @@
 import { ActionIcon, Stack } from '@mantine/core'
-import AccessKeyInput from './AccessKeyInput'
+import AccessKeyInput from './inputs/AccessKeyInput'
 import { useForm } from '@mantine/form'
 import { InvoiceAccessKey } from '~/helpers/types'
 import { trpc } from '~/helpers/trpc'
@@ -7,12 +7,20 @@ import SubmitButton from './SubmitButton'
 import { IconCamera } from '@tabler/icons-react'
 import { useState } from 'react'
 import QrCodeScanner from './QrCodeScanner'
+import { nfeAccessKeySchema } from '~/helpers/zod'
+import logger from '~/helpers/logger'
 
 type Form = {
   nfceAccessKey: InvoiceAccessKey | null
 }
 
-const ManualInvoiceImporter = () => {
+type Props = {
+  onImport: () => void
+}
+
+const ManualInvoiceImporter = ({
+  onImport,
+}: Props) => {
   const [scanningQr, setScanningQr] = useState(false)
   const form = useForm<Form>({
     initialValues: {
@@ -31,17 +39,37 @@ const ManualInvoiceImporter = () => {
     },
   })
 
-  const handleSubmit = async (values: typeof form.values) => {
+  const handleSubmit = async ({ nfceAccessKey }: typeof form.values) => {
+    if (!nfceAccessKey) {
+      return
+    }
+
     await processInvoice.mutateAsync({
-      nfceAccessKey: values.nfceAccessKey,
+      nfceAccessKey,
     })
+
+    onImport()
+  }
+
+  const resolveQrCodeData = (qrData: string) => {
+    logger.debug({ qrData }, 'QR Code Data')
+    // Chave de Acesso (às vezes com prefixo 'CFe')
+    // Data e Hora
+    // Valor Total
+    // CPF do Cliente (ou vazio)
+    // Assinatura?
+    const data = qrData.split('|')
+
+    const accessKey = data[0]?.match(/\d{44}/)?.[0]
+    logger.debug({ accessKey }, 'Access Key')
+
+    return nfeAccessKeySchema.parse(accessKey)
   }
 
   return (
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stack>
         <AccessKeyInput
-          style={{ flexGrow: 1 }}
           required
           {...form.getInputProps('nfceAccessKey')}
           rightSection={scanningQr ? null : (
@@ -56,7 +84,7 @@ const ManualInvoiceImporter = () => {
           scanningQr ? (
             <QrCodeScanner
               onScan={(qrCodeData) => {
-                form.setFieldValue('nfceAccessKey', qrCodeData)
+                form.setFieldValue('nfceAccessKey', resolveQrCodeData(qrCodeData))
                 setScanningQr(false)
               }}
             />
@@ -68,4 +96,4 @@ const ManualInvoiceImporter = () => {
   )
 }
 
-export default trpc.withTRPC(ManualInvoiceImporter)
+export default ManualInvoiceImporter

@@ -26,42 +26,49 @@ export const openPage = async (url: string) => {
     headless: isProduction,
     timeout: 0,
   })
-  const page = await browser.newPage()
+  try {
+    const page = await browser.newPage()
 
-  const userAgent = new UserAgent(/Windows/)
-  await page.setUserAgent(userAgent.toString())
-  await page.setViewport({
-    width: 1600 + Math.floor(Math.random() * 200 - 100),
-    height: 900 + Math.floor(Math.random() * 200 - 100),
-    isLandscape: false,
-    isMobile: false,
-  })
-
-  if (isProduction) {
-    await page.setRequestInterception(true)
-    page.on('request', (req) => {
-      if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-        void req.abort()
-      } else {
-        void req.continue()
-      }
+    const userAgent = new UserAgent(/Windows/)
+    await page.setUserAgent(userAgent.toString())
+    await page.setViewport({
+      width: 1600 + Math.floor(Math.random() * 200 - 100),
+      height: 900 + Math.floor(Math.random() * 200 - 100),
+      isLandscape: false,
+      isMobile: false,
     })
+
+    if (isProduction) {
+      await page.setRequestInterception(true)
+      page.on('request', (req) => {
+        if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
+          void req.abort()
+        } else {
+          void req.continue()
+        }
+      })
+    }
+
+    await page.goto(url)
+
+    return { page, browser }
+  } finally {
+    await browser.close()
   }
-
-  await page.goto(url, {
-    waitUntil: 'networkidle0',
-    timeout: 0,
-  })
-
-  return { page, browser }
 }
 
 export const solveCaptcha = async (page: Page) => {
-  const overQuota = await page.$('#rc-anchor-over-quota')
+  const captchaIframeElement = await page.waitForSelector('.g-recaptcha iframe')
+  const captchaIframe = await captchaIframeElement?.contentFrame()
+
+  if (!captchaIframe) {
+    throw new Error('Captcha iframe not found')
+  }
+
+  const overQuota = await captchaIframe.$('#rc-anchor-over-quota')
 
   if (overQuota) {
-    await page.click('#recaptcha-anchor')
-    await page.waitForNetworkIdle()
+    await captchaIframe.click('#recaptcha-anchor')
   }
 
   if (isProduction) {

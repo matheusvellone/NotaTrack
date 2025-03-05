@@ -47,12 +47,16 @@ export const documentNumberRule = z.custom<CPF | CNPJ>((value) => {
 }, (input) => {
   let message = 'Documento inválido'
 
-  if (input.length === 11) {
-    message = 'CPF inválido'
-  }
+  if (typeof input === 'string') {
+    if (input.length === 11) {
+      message = 'CPF inválido'
+    }
 
-  if (input.length === 14) {
-    message = 'CNPJ inválido'
+    if (input.length === 14) {
+      message = 'CNPJ inválido'
+    }
+  } else {
+    message = 'O documento deve ser uma string'
   }
 
   return {

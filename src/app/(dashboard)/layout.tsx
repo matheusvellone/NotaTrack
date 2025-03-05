@@ -1,7 +1,6 @@
 'use client'
 
 import { PropsWithChildren } from 'react'
-import { trpc } from '~/helpers/trpc'
 import { AppShell, Burger, Group, NavLink, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import Link from 'next/link'
@@ -86,4 +85,4 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
   )
 }
 
-export default trpc.withTRPC(DashboardLayout)
+export default DashboardLayout

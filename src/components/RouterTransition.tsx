@@ -6,7 +6,7 @@ import { useMantineColorScheme } from '@mantine/core'
 import { TRPCLink } from '@trpc/client'
 import { AppRouter } from '~/server/routers'
 import { observable } from '@trpc/server/observable'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import '@mantine/nprogress/styles.css'
 
 let timer: NodeJS.Timeout
@@ -53,12 +53,11 @@ const onFinishRequest = () => {
 const RouterTransition = () => {
   const { colorScheme } = useMantineColorScheme()
   const pathname = usePathname()
-  const searchParams = useSearchParams()
 
   useEffect(() => {
     onStartRequest()
     onFinishRequest()
-  }, [pathname, searchParams])
+  }, [pathname])
 
   useEffect(() => {
     const originalFetch = globalThis.fetch

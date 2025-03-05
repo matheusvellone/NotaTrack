@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form'
 import { trpc } from '~/helpers/trpc'
 import { UF } from '~/helpers/uf'
 import UfSelector from './UfSelector'
-import DocumentNumberInput from './DocumentNumberInput'
+import DocumentNumberInput from './inputs/DocumentNumberInput'
 import { FormOnSubmit } from '~/helpers/mantine'
 import { IMPORT_INVOICE_LOGIN_INFORMATION, ImportInvoiceLoginInformation } from '~/constants/localStorage'
 
@@ -117,4 +117,4 @@ const InvoiceImporter = ({
   )
 }
 
-export default trpc.withTRPC(InvoiceImporter)
+export default InvoiceImporter

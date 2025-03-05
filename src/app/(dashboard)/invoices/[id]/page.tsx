@@ -95,8 +95,12 @@ const InvoiceDetail = ({ params }: Props) => {
               <Text>{invoiceProduct.quantity}x {invoiceProduct.product.unit}</Text>
               <Text>{invoiceProduct.quantity}x <Amount span>{invoiceProduct.unitPrice}</Amount></Text>
               <Amount>{invoiceProduct.price}</Amount>
-              <Amount>{invoiceProduct.discount}</Amount>
-              <Amount>{invoiceProduct.tax}</Amount>
+              <Text>
+                Desconto: <Amount span>{invoiceProduct.discount || 0}</Amount>
+              </Text>
+              <Text>
+                Imposto: <Amount span>{invoiceProduct.tax || 0}</Amount>
+              </Text>
             </Stack>
           ))
         }

@@ -6,6 +6,7 @@ import { InvoiceStatus } from '@prisma/client'
 import Link from 'next/link'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
+import { isValidEnumValue } from '~/helpers/enum'
 import { trpc } from '~/helpers/trpc'
 import { InvoiceAccessKey } from '~/helpers/types'
 
@@ -14,9 +15,7 @@ type Filter = {
 }
 
 const InvoicesList = () => {
-  const [filters, setFilters] = useSetState<Filter>({
-    status: InvoiceStatus.PENDING,
-  })
+  const [filters, setFilters] = useSetState<Filter>({})
 
   const listInvoices = trpc.invoice.list.useQuery(filters)
   const processInvoice = trpc.invoice.process.useMutation()
@@ -51,11 +50,17 @@ const InvoicesList = () => {
               return 'Todos'
             }
 
+            if (!isValidEnumValue(option.value, InvoiceStatus)) {
+              return null
+            }
+
             return (
               <InvoiceStatusBadge status={option.value}/>
             )
           }}
-          onChange={(status) => setFilters({ status })}
+          onChange={(status) => setFilters({
+            status: (status as InvoiceStatus | null) || undefined,
+          })}
         />
       </Group>
       {

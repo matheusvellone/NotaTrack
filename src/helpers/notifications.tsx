@@ -83,4 +83,4 @@ export const notificateError = (title: string, error: unknown) => showNotificati
   message: getErrorMessage(error),
 })
 
-// export const getNotificationErrorHandler = (title: string) => (error: unknown) => notificateError(title, error)
+export const getNotificationErrorHandler = (title: string) => (error: unknown) => notificateError(title, error)
