@@ -5,11 +5,11 @@
   "scripts": {
     "dev": "next dev --turbopack | pino-pretty",
     "build": "next build",
+    "build-test": "tsc --noEmit && npm run lint",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "@infosimples/node_two_captcha": "^1.2.0",
     "@mantine/core": "^7.17.1",
     "@mantine/form": "^7.17.1",
     "@mantine/hooks": "^7.17.1",
@@ -22,8 +22,6 @@
     "@trpc/next": "^11.0.0-rc.700",
     "@trpc/react-query": "^11.0.0-rc.700",
     "@trpc/server": "^11.0.0-rc.700",
-    "axios": "^1.8.1",
-    "axios-cookiejar-support": "^5.0.5",
     "bluebird": "^3.7.2",
     "cheerio": "^1.0.0",
     "cpf-cnpj-validator": "^1.0.3",
@@ -38,8 +36,6 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-imask": "^7.6.1",
-    "selenium-webdriver": "^4.29.0",
-    "tough-cookie": "^5.1.2",
     "user-agents": "^1.1.468",
     "zod": "^3.24.2"
   },
@@ -61,6 +57,7 @@
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-unicorn": "^57.0.0",
     "globals": "^16.0.0",
+    "knip": "^5.45.0",
     "npm-check-updates": "^17.1.15",
     "pino-pretty": "^13.0.0",
     "postcss": "^8.5.3",

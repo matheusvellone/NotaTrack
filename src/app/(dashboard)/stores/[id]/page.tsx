@@ -4,6 +4,7 @@ import { Group, Stack, Text } from '@mantine/core'
 import { use } from 'react'
 import Document from '~/components/Document'
 import { trpc } from '~/helpers/trpc'
+import storeSchema from '~/schemas/store'
 
 type Props = {
   params: Promise<{
@@ -14,14 +15,23 @@ type Props = {
 const StoreDetail = ({ params }: Props) => {
   const { id } = use(params)
 
-  const showStore = trpc.store.show.useQuery(Number(id))
+  const {
+    error: validationError,
+    data: parsedId,
+  } = storeSchema.id.safeParse(id)
+
+  if (validationError) {
+    return validationError.toString()
+  }
+
+  const showStore = trpc.store.show.useQuery(parsedId)
 
   if (showStore.isFetching) {
     return <div>Loading...</div>
   }
 
   if (!showStore.isSuccess) {
-    return <div>Error: {showStore.error.message}</div>
+    return <div>Error: {showStore.error?.message}</div>
   }
 
   const store = showStore.data

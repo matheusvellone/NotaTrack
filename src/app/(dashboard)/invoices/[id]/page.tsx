@@ -6,6 +6,7 @@ import { use } from 'react'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
 import { trpc } from '~/helpers/trpc'
+import invoiceSchema from '~/schemas/invoice'
 
 type Props = {
   params: Promise<{
@@ -16,7 +17,16 @@ type Props = {
 const InvoiceDetail = ({ params }: Props) => {
   const { id } = use(params)
 
-  const showInvoice = trpc.invoice.show.useQuery({ id: Number(id) })
+  const {
+    error: validationError,
+    data: parsedId,
+  } = invoiceSchema.id.safeParse(id)
+
+  if (validationError) {
+    return validationError.toString()
+  }
+
+  const showInvoice = trpc.invoice.show.useQuery({ id: parsedId })
   const processInvoice = trpc.invoice.process.useMutation({
     trpc: {
       context: {
@@ -33,7 +43,7 @@ const InvoiceDetail = ({ params }: Props) => {
   }
 
   if (!showInvoice.isSuccess) {
-    return <div>Error: {showInvoice.error.message}</div>
+    return <div>Error: {showInvoice.error?.message}</div>
   }
 
   const invoice = showInvoice.data

@@ -19,3 +19,11 @@ db-reset: ## Reset your database
 .PHONY: types
 types: ## Generate types
 	@npx prisma generate
+
+.PHONY: knip
+knip: ## Run Knip
+	@npx knip
+
+.PHONY: build-test
+build-test: ## Run TS check and linter
+	@npm run build-test

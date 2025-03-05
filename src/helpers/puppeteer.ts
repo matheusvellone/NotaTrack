@@ -73,7 +73,10 @@ export const solveCaptcha = async (page: Page) => {
   }
 
   await page.waitForFunction(() => {
-    return grecaptcha.getResponse().length > 0
+    // @ts-expect-error Tipagem do browser
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const recaptchaResponse = globalThis.grecaptcha.getResponse() as string
+    return recaptchaResponse.length > 0
   }, {
     polling: 100,
     timeout: isProduction ? undefined : 0,

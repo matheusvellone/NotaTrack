@@ -20,14 +20,21 @@ const importInvoices: ImportInvoice = async (input) => {
     await page.locator('#btnConsultarNFSemestre').click()
     await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
-    const pageContent = await page.content()
-    let $ = cheerio.load(pageContent)
-    const firstLink = $('#gdvConsulta tbody tr:nth-child(2) a').get(0)
+    const firstLink = await page.$('#gdvConsulta tbody tr:nth-child(2) a')
 
-    if (firstLink && !firstLink.attribs.onclick) {
+    if (!firstLink) {
+      throw new Error('Could not find first link')
+    }
+
+    const firstLinkOnClick = await firstLink.evaluate((el) => el.getAttribute('onclick'))
+
+    if (!firstLinkOnClick) {
       await page.click('#gdvConsulta tbody tr:nth-child(2) a')
+      // Confirmation modal open
       await page.waitForNavigation()
+      // Confirmation code input
       await page.waitForNavigation({ timeout: 0 })
+      // Modal closed
       await page.waitForNavigation({ timeout: 0 })
     }
 
@@ -35,6 +42,9 @@ const importInvoices: ImportInvoice = async (input) => {
 
     let processPage = true
     while (processPage) {
+      const pageContent = await page.content()
+      const $ = cheerio.load(pageContent)
+
       $('#gdvConsulta tbody tr:not(:first):not(:last)').each((_, element) => {
         const onclick = $(element).find('a').attr('onclick') || ''
 
@@ -59,10 +69,8 @@ const importInvoices: ImportInvoice = async (input) => {
       if (nextPageButton) {
         await nextPageButton.click()
         await page.waitForNavigation()
-
-        const nextPageContent = await page.content()
-        $ = cheerio.load(nextPageContent)
       }
+
       processPage = !!nextPageButton
     }
 
