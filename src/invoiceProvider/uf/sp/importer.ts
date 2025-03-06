@@ -3,20 +3,23 @@ import * as cheerio from 'cheerio'
 import { ImportInvoice } from '~/invoiceProvider/types'
 
 const importInvoices: ImportInvoice = async (input) => {
-  const { browser, page } = await openPage('https://www.nfp.fazenda.sp.gov.br/login.aspx?ReturnUrl=%2fInicio.aspx')
+  const page = await openPage('https://www.nfp.fazenda.sp.gov.br/Inicio.aspx')
 
   try {
-    // TODO: if username is a valid CNPJ, change to CNPJ login
-    await page.locator('#UserName').fill(input.username)
-    await page.locator('#Password').fill(input.password)
+    const isLoggingIn = page.url().includes('login.aspx')
+    if (isLoggingIn) {
+      // TODO: if username is a valid CNPJ, change to CNPJ login
+      await page.locator('#UserName').fill(input.username)
+      await page.locator('#Password').fill(input.password)
 
-    // Login page
-    await solveCaptcha(page)
-    await page.locator('#btnLogin').click()
-    await page.waitForNavigation({ waitUntil: 'networkidle0' })
+      // Login page
+      await solveCaptcha(page, '.g-recaptcha')
+      await page.locator('#btnLogin').click()
+      await page.waitForNavigation({ waitUntil: 'networkidle0' })
+    }
 
     // Date range select page
-    await solveCaptcha(page)
+    await solveCaptcha(page, '.g-recaptcha')
     await page.locator('#btnConsultarNFSemestre').click()
     await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
@@ -30,12 +33,20 @@ const importInvoices: ImportInvoice = async (input) => {
 
     if (!firstLinkOnClick) {
       await page.click('#gdvConsulta tbody tr:nth-child(2) a')
-      // Confirmation modal open
-      await page.waitForNavigation()
-      // Confirmation code input
-      await page.waitForNavigation({ timeout: 0 })
-      // Modal closed
-      await page.waitForNavigation({ timeout: 0 })
+      // Wait for confirmation modal to open
+      await page.waitForNavigation({ waitUntil: 'networkidle0' })
+
+      // Wait for code input
+      await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
+
+      const error = await page.$('#lblErroA2F')
+      if (error) {
+        const errorText = await error.evaluate(el => el.textContent) || 'Erro ao confirmar código'
+        throw new Error(errorText)
+      }
+
+      // Wait for page load after closing modal
+      await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
     }
 
     const invoices: string[] = []
@@ -76,7 +87,7 @@ const importInvoices: ImportInvoice = async (input) => {
 
     return invoices
   } finally {
-    await browser.close()
+    await page.close()
   }
 }
 

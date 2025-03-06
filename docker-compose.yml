@@ -1,10 +1,29 @@
 services:
+  # chrome:
+  #   image: ghcr.io/browserless/chromium
+  #   ports:
+  #     - 3001:3000
+  #   environment:
+  #     - TOKEN=6R0W53R135510
+  #     # - TIMEOUT=60000
+
+  # chrome:
+  #   image: kasmweb/chrome:1.16.0
+  #   environment:
+  #     - VNC_PW=password
+  #     - APP_ARGS="--remote-debugging-port=9222 --remote-debugging-address=0.0.0.0"
+  #   ports:
+  #     - 9222:9222
+  #     - 6901:6901
+
   app:
     build:
       context: .
-      target: runner
+      target: dev
     ports:
-      - "3000:3000"
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
     volumes:
       - .:/app
-      - /app/node_modules
+    command: npm run dev

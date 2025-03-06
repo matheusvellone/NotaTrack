@@ -32,14 +32,14 @@ const parseUnit = (unit: string | undefined) => {
 
 // 35250293209765066053590013031990134078741533
 const satsp: ProcessInvoice = async (invoiceAccessKey) => {
-  const { browser, page } = await openPage('https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx')
+  const page = await openPage('https://satsp.fazenda.sp.gov.br/COMSAT/Public/ConsultaPublica/ConsultaPublicaCfe.aspx')
 
   try {
     await page.click('#conteudo_txtChaveAcesso')
     await Promise.delay(100)
     await page.locator('#conteudo_txtChaveAcesso').fill(invoiceAccessKey)
 
-    await solveCaptcha(page)
+    await solveCaptcha(page, '#ReCaptchContainer')
 
     await page.locator('#conteudo_btnConsultar').click()
     await page.waitForNavigation({ waitUntil: 'networkidle0' })
@@ -103,7 +103,7 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
       products: Object.values(products),
     }
   } finally {
-    await browser.close()
+    await page.close()
   }
 }
 

@@ -18,12 +18,19 @@ const parseUnit = (unit: string | undefined) => {
 
 // 35250151272474000204651140000786871621468568
 const fazenda: ProcessInvoice = async (invoiceAccessKey) => {
-  const { browser, page } = await openPage('https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx')
+  const page = await openPage('https://www.nfce.fazenda.sp.gov.br/NFCeConsultaPublica/Paginas/ConsultaPublica.aspx')
 
   try {
+    const invoiceQueryButton = await page.$('#btnNovaConsulta')
+
+    if (invoiceQueryButton) {
+      await invoiceQueryButton.click()
+      await page.waitForNavigation({ waitUntil: 'networkidle0' })
+    }
+
     await page.locator('#Conteudo_txtChaveAcesso').fill(invoiceAccessKey)
 
-    await solveCaptcha(page)
+    await solveCaptcha(page, '.g-recaptcha')
 
     await page.locator('#Conteudo_btnConsultaResumida').click()
     await page.waitForNavigation({ waitUntil: 'networkidle0' })
@@ -70,7 +77,7 @@ const fazenda: ProcessInvoice = async (invoiceAccessKey) => {
       products,
     }
   } finally {
-    await browser.close()
+    await page.close()
   }
 }
 

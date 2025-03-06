@@ -3,9 +3,9 @@ import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 import UserAgent from 'user-agents'
 
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { isProduction } from '~/helpers/env'
-import { Page } from 'puppeteer'
+import { isDevelopment, isProduction } from '~/helpers/env'
 import { Promise } from 'bluebird'
+import type { Browser, Page } from 'puppeteer'
 
 const {
   TWO_CAPTCHA_API_KEY,
@@ -16,19 +16,58 @@ puppeteer.use(StealthPlugin())
 puppeteer.use(
   RecaptchaPlugin({
     provider: { id: '2captcha', token: TWO_CAPTCHA_API_KEY },
-    visualFeedback: true,
+    visualFeedback: isDevelopment,
   }),
 )
 
-export const openPage = async (url: string) => {
-  const browser = await puppeteer.launch({
+const globalForPuppeteer = globalThis as unknown as {
+  puppeteerBrowser?: Browser
+}
+
+const browserSingleton = async () => {
+  const globalBrowser = globalForPuppeteer.puppeteerBrowser
+
+  if (globalBrowser) {
+    if (globalBrowser.connected) {
+      return globalBrowser
+    }
+
+    await globalBrowser.close()
+  }
+
+  const {
+    PUPPETEER_BROWSER_ENDPOINT,
+    PUPPETEER_WS_ENDPOINT,
+  } = process.env
+
+  if (PUPPETEER_BROWSER_ENDPOINT || PUPPETEER_WS_ENDPOINT) {
+    return puppeteer.connect({
+      browserURL: PUPPETEER_BROWSER_ENDPOINT,
+      browserWSEndpoint: PUPPETEER_WS_ENDPOINT,
+      acceptInsecureCerts: true,
+    })
+  }
+
+  const newBrowser = await puppeteer.launch({
     acceptInsecureCerts: true,
     headless: isProduction,
-    timeout: 0,
+    executablePath: process.env.CHROME_BIN,
+    args: [
+      '--no-sandbox',
+      '--disable-gpu',
+      '--disable-dev-shm-usage',
+    ],
   })
-  try {
-    const page = await browser.newPage()
 
+  globalForPuppeteer.puppeteerBrowser = newBrowser
+  return newBrowser
+}
+
+export const openPage = async (url: string) => {
+  const browser = await browserSingleton()
+  const page = await browser.newPage()
+
+  try {
     const userAgent = new UserAgent(/Windows/)
     await page.setUserAgent(userAgent.toString())
     await page.setViewport({
@@ -49,29 +88,36 @@ export const openPage = async (url: string) => {
       })
     }
 
-    await page.goto(url)
+    await page.goto(url, { waitUntil: 'networkidle0' })
 
-    return { page, browser }
-  } finally {
-    await browser.close()
+    return page
+  } catch (error) {
+    await page.close()
+
+    throw error
   }
 }
 
-export const solveCaptcha = async (page: Page) => {
-  const captchaIframeElement = await page.waitForSelector('.g-recaptcha iframe')
+const isCaptchaSolved = () => {
+  // @ts-expect-error Tipagem do browser
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const recaptchaResponse = globalThis.grecaptcha.getResponse() as string
+  return recaptchaResponse.length > 0
+}
+
+export const solveCaptcha = async (page: Page, parentCaptchaSelector: string) => {
+  const captchaIframeElement = await page.waitForSelector(`${parentCaptchaSelector} iframe`)
   const captchaIframe = await captchaIframeElement?.contentFrame()
 
   if (!captchaIframe) {
     throw new Error('Captcha iframe not found')
   }
 
-  const overQuota = await captchaIframe.$('#rc-anchor-over-quota')
+  await captchaIframe.click('#recaptcha-anchor')
 
-  if (overQuota) {
-    await captchaIframe.click('#recaptcha-anchor')
-  }
+  const captchaSolved = await page.evaluate(isCaptchaSolved)
 
-  if (isProduction) {
+  if (!captchaSolved && isProduction) {
     if (!TWO_CAPTCHA_API_KEY) {
       throw new Error('2Captcha API Key is required to solve captches')
     }
@@ -79,12 +125,7 @@ export const solveCaptcha = async (page: Page) => {
     await page.solveRecaptchas()
   }
 
-  await page.waitForFunction(() => {
-    // @ts-expect-error Tipagem do browser
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const recaptchaResponse = globalThis.grecaptcha.getResponse() as string
-    return recaptchaResponse.length > 0
-  }, {
+  await page.waitForFunction(isCaptchaSolved, {
     polling: 100,
     timeout: isProduction ? undefined : 0,
   })

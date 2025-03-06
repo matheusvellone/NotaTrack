@@ -1,6 +1,21 @@
 ARG NODE_VERSION=22
 
+FROM node:${NODE_VERSION}-alpine AS dev
+
+WORKDIR /app
+ENV NODE_ENV=development
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+RUN npx prisma generate
+
 FROM node:${NODE_VERSION}-alpine AS builder
+
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD true
 
 WORKDIR /app
 
@@ -28,7 +43,7 @@ USER node
 ENV NODE_ENV=production
 
 COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/next.config.js .
+COPY --from=builder /app/next.config.ts .
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/src ./src
