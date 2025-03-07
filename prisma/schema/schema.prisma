@@ -42,6 +42,7 @@ model Invoice {
   status InvoiceStatus
   emissionDate DateTime? @map("emission_date")
   processedAt DateTime? @map("processed_at")
+  totalValue Int? @map("total_value")
 
   store Store? @relation(fields: [storeId], references: [id])
   invoiceProducts InvoiceProduct[]

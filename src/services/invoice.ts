@@ -108,6 +108,7 @@ export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
         })
       })
 
+      const totalValue = content.products.reduce((acc, product) => acc + product.price - (product.discount ?? 0), 0)
       await $prisma.invoice.update({
         where: {
           id: invoice.id,
@@ -117,6 +118,7 @@ export const process = async (invoiceAccessKey: InvoiceAccessKey) => {
           emissionDate: content.emissionDate,
           processedAt: DateTime.now().toJSDate(),
           storeId: store.id,
+          totalValue,
         },
       })
     })

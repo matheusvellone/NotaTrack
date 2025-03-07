@@ -19,6 +19,7 @@ Table invoices {
   status InvoiceStatus [not null]
   emissionDate DateTime
   processedAt DateTime
+  totalValue Int
   store stores
   invoiceProducts invoice_products [not null]
   createdAt DateTime [default: `now()`, not null]

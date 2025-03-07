@@ -75,6 +75,14 @@ const InvoiceDetail = ({ params }: Props) => {
         <InvoiceStatusBadge status={invoice.status} />
       </Group>
       <Group>
+        <Text>Valor da compra</Text>
+        {
+          invoice.totalValue === null ? '-' : (
+            <Amount>{invoice.totalValue}</Amount>
+          )
+        }
+      </Group>
+      <Group>
         <Text>Data da Compra</Text>
         {
           invoice.emissionDate ? (
