@@ -90,16 +90,14 @@ const InvoiceDetail = ({ params }: Props) => {
       <SimpleGrid cols={{ xs: 1, sm: 3, md: 6 }}>
         {
           invoice.invoiceProducts.map((invoiceProduct) => (
-            <Stack key={invoiceProduct.id}>
+            <Stack key={invoiceProduct.id} style={{ border: '1px solid white' }}>
               <Text>{invoiceProduct.product.name}</Text>
-              <Text>{invoiceProduct.quantity}x {invoiceProduct.product.unit}</Text>
-              <Text>{invoiceProduct.quantity}x <Amount span>{invoiceProduct.unitPrice}</Amount></Text>
-              <Amount>{invoiceProduct.price}</Amount>
+              <Text>{invoiceProduct.quantity}x <Amount span>{invoiceProduct.unitPrice}</Amount>/{invoiceProduct.product.unit} = <Amount span>{invoiceProduct.price}</Amount></Text>
               <Text>
-                Desconto: <Amount span>{invoiceProduct.discount || 0}</Amount>
+                Desconto: <Amount span>{invoiceProduct.discount ?? 0}</Amount>
               </Text>
               <Text>
-                Imposto: <Amount span>{invoiceProduct.tax || 0}</Amount>
+                Imposto: <Amount span>{invoiceProduct.tax ?? 0}</Amount>
               </Text>
             </Stack>
           ))

@@ -1,7 +1,9 @@
 'use client'
 
-import { Group, Stack, Text } from '@mantine/core'
+import { Anchor, Group, Stack, Table, Text } from '@mantine/core'
+import Link from 'next/link'
 import { use } from 'react'
+import Amount from '~/components/Amount'
 import { trpc } from '~/helpers/trpc'
 import productSchema from '~/schemas/product'
 
@@ -42,9 +44,36 @@ const ProductDetail = ({ params }: Props) => {
         <Text>{product.name}</Text>
       </Group>
       <Group>
-        <Text>Unit</Text>
+        <Text>Unidade</Text>
         <Text>{product.unit}</Text>
       </Group>
+      <Table striped>
+        <Table.Thead>
+          <Table.Th>Nota Fiscal</Table.Th>
+          <Table.Th>Data da compra</Table.Th>
+          <Table.Th>Valor pago</Table.Th>
+          <Table.Th>Quantidade</Table.Th>
+        </Table.Thead>
+        <Table.Tbody>
+          {
+            product.invoiceProducts.map((invoiceProduct) => (
+              <Table.Tr key={invoiceProduct.id}>
+                <Table.Td>
+                  <Anchor
+                    component={Link}
+                    href={`/invoices/${invoiceProduct.invoice.id}`}
+                  >
+                    {invoiceProduct.invoice.id}
+                  </Anchor>
+                </Table.Td>
+                <Table.Td>{invoiceProduct.invoice.emissionDate}</Table.Td>
+                <Table.Td><Amount>{invoiceProduct.price}</Amount></Table.Td>
+                <Table.Td>{invoiceProduct.quantity}</Table.Td>
+              </Table.Tr>
+            ))
+          }
+        </Table.Tbody>
+      </Table>
     </Stack>
   )
 }

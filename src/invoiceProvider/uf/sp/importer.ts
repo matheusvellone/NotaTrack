@@ -1,6 +1,8 @@
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { ImportInvoice } from '~/invoiceProvider/types'
+import { isDevelopment } from '~/helpers/env'
+import { DateTime } from 'luxon'
 
 const importInvoices: ImportInvoice = async (input) => {
   const page = await openPage('https://www.nfp.fazenda.sp.gov.br/Inicio.aspx')
@@ -86,6 +88,16 @@ const importInvoices: ImportInvoice = async (input) => {
     }
 
     return invoices
+  } catch (error) {
+    if (isDevelopment) {
+      const screenshotFilename = `error-${DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss')}-import-sp`
+      await page.screenshot({
+        fullPage: true,
+        path: `screenshots/${screenshotFilename}.png`,
+      })
+    }
+
+    throw error
   } finally {
     await page.close()
   }

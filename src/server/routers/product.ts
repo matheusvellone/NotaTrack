@@ -1,6 +1,6 @@
 import { prisma } from '~/database'
 import { publicProcedure } from '../trpc'
-import { Product } from '~/entities'
+import { Invoice, InvoiceProduct, Product } from '~/entities'
 import { buildModelIdSchema } from '~/helpers/zod'
 
 const idRule = buildModelIdSchema<Product>()
@@ -12,10 +12,21 @@ export const list = publicProcedure
 
 export const show = publicProcedure
   .input(idRule)
-  .query(({ input }) => {
-    return prisma.product.findFirstOrThrow({
+  .query(async ({ input }) => {
+    return await prisma.product.findFirstOrThrow({
       where: {
         id: input,
       },
-    })
+      include: {
+        invoiceProducts: {
+          include: {
+            invoice: true,
+          },
+        },
+      },
+    }) as Product & {
+      invoiceProducts: Array<InvoiceProduct & {
+        invoice: Invoice
+      }>
+    }
   })

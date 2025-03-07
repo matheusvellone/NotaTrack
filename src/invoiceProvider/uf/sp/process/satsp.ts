@@ -5,6 +5,7 @@ import { ProductUnit } from '@prisma/client'
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { Promise } from 'bluebird'
+import { isDevelopment } from '~/helpers/env'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit?.includes('KG')) {
@@ -24,6 +25,10 @@ const parseUnit = (unit: string | undefined) => {
   }
 
   if (unit?.includes('BLD')) {
+    return ProductUnit.UN
+  }
+
+  if (unit?.includes('LTA')) {
     return ProductUnit.UN
   }
 
@@ -102,6 +107,16 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
       emissionDate,
       products: Object.values(products),
     }
+  } catch (error) {
+    if (isDevelopment) {
+      const screenshotFilename = `error-${DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss')}-${invoiceAccessKey}`
+      await page.screenshot({
+        fullPage: true,
+        path: `screenshots/${screenshotFilename}.png`,
+      })
+    }
+
+    throw error
   } finally {
     await page.close()
   }

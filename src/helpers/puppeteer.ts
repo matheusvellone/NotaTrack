@@ -45,13 +45,13 @@ const browserSingleton = async () => {
       browserURL: PUPPETEER_BROWSER_ENDPOINT,
       browserWSEndpoint: PUPPETEER_WS_ENDPOINT,
       acceptInsecureCerts: true,
+      defaultViewport: null,
     })
   }
 
   const newBrowser = await puppeteer.launch({
     acceptInsecureCerts: true,
     headless: isProduction,
-    executablePath: process.env.CHROME_BIN,
     args: [
       '--no-sandbox',
       '--disable-gpu',
@@ -73,20 +73,10 @@ export const openPage = async (url: string) => {
     await page.setViewport({
       width: 1600 + Math.floor(Math.random() * 200 - 100),
       height: 900 + Math.floor(Math.random() * 200 - 100),
+
       isLandscape: false,
       isMobile: false,
     })
-
-    if (isProduction) {
-      await page.setRequestInterception(true)
-      page.on('request', (req) => {
-        if (req.resourceType() === 'stylesheet' || req.resourceType() === 'font' || req.resourceType() === 'image') {
-          void req.abort()
-        } else {
-          void req.continue()
-        }
-      })
-    }
 
     await page.goto(url, { waitUntil: 'networkidle0' })
 

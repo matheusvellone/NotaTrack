@@ -3,6 +3,7 @@ import { ProductUnit } from '@prisma/client'
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { DateTime } from 'luxon'
+import { isDevelopment } from '~/helpers/env'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit === 'KG') {
@@ -10,6 +11,10 @@ const parseUnit = (unit: string | undefined) => {
   }
 
   if (unit === 'UN') {
+    return ProductUnit.UN
+  }
+
+  if (unit === 'BD') {
     return ProductUnit.UN
   }
 
@@ -76,6 +81,16 @@ const fazenda: ProcessInvoice = async (invoiceAccessKey) => {
       emissionDate,
       products,
     }
+  } catch (error) {
+    if (isDevelopment) {
+      const screenshotFilename = `error-${DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss')}-${invoiceAccessKey}`
+      await page.screenshot({
+        fullPage: true,
+        path: `screenshots/${screenshotFilename}.png`,
+      })
+    }
+
+    throw error
   } finally {
     await page.close()
   }
