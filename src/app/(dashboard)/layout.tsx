@@ -30,7 +30,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
           <Group wrap='nowrap'>
             <Burger opened={mobileOpened} onClick={toggleMobile} hiddenFrom="sm" size="sm" />
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
-            <Title lineClamp={1}>Groceries Tracker</Title>
+            <Title lineClamp={1}>NotaTrack</Title>
           </Group>
           <ColorThemeSwitch/>
         </Group>

@@ -3,7 +3,7 @@ import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 import UserAgent from 'user-agents'
 
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import { isDevelopment, isProduction } from '~/helpers/env'
+import { isProduction } from '~/helpers/env'
 import { Promise } from 'bluebird'
 import type { Browser, Page } from 'puppeteer'
 
@@ -16,7 +16,7 @@ puppeteer.use(StealthPlugin())
 puppeteer.use(
   RecaptchaPlugin({
     provider: { id: '2captcha', token: TWO_CAPTCHA_API_KEY },
-    visualFeedback: isDevelopment,
+    visualFeedback: true,
   }),
 )
 
@@ -51,7 +51,7 @@ const browserSingleton = async () => {
 
   const newBrowser = await puppeteer.launch({
     acceptInsecureCerts: true,
-    headless: isProduction,
+    headless: false,
     args: [
       '--no-sandbox',
       '--disable-gpu',
@@ -70,13 +70,6 @@ export const openPage = async (url: string) => {
   try {
     const userAgent = new UserAgent(/Windows/)
     await page.setUserAgent(userAgent.toString())
-    await page.setViewport({
-      width: 1600 + Math.floor(Math.random() * 200 - 100),
-      height: 900 + Math.floor(Math.random() * 200 - 100),
-
-      isLandscape: false,
-      isMobile: false,
-    })
 
     await page.goto(url, { waitUntil: 'networkidle0' })
 
@@ -107,11 +100,7 @@ export const solveCaptcha = async (page: Page, parentCaptchaSelector: string) =>
 
   const captchaSolved = await page.evaluate(isCaptchaSolved)
 
-  if (!captchaSolved && isProduction) {
-    if (!TWO_CAPTCHA_API_KEY) {
-      throw new Error('2Captcha API Key is required to solve captches')
-    }
-
+  if (!captchaSolved && TWO_CAPTCHA_API_KEY) {
     await page.solveRecaptchas()
   }
 
