@@ -5,6 +5,12 @@
 - Buscar dados de notas fiscais emitidas no CPF. Cadastrando lojas, produtos e seus preços
 - Importar notas fiscais utilizando o QrCode da nota
 
+Add images
+
+![](images/import.png)
+![](images/manual_add.png)
+![](images/notas.png)
+
 ## Rodando o projeto
 - Clone o repositório
 - Instale as dependências
