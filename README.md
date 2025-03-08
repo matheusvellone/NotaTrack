@@ -52,5 +52,5 @@ Inicialize o Chrome com a flag `--remote-debugging-port=9222` e configure a vari
   - [ ] Produtos comprados no mês (com valor total)
   - [ ] Lojas mais frequentadas
   - [ ] Produtos mais comprados
-- [ ] Possibilidade de rodar o projeto
+- [ ] Possibilidade de rodar o projeto via Docker
 - [ ] Permitir o uso de outros bancos de dados
