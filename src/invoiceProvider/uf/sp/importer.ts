@@ -47,6 +47,7 @@ const importInvoices: ImportInvoice = async (input) => {
         throw new Error(errorText)
       }
 
+      // TODO: clicar no botao
       // Wait for page load after closing modal
       await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
     }

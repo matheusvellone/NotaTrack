@@ -6,6 +6,7 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 import { isProduction } from '~/helpers/env'
 import { Promise } from 'bluebird'
 import type { Browser, Page } from 'puppeteer'
+import logger from './logger'
 
 const {
   TWO_CAPTCHA_API_KEY,
@@ -41,14 +42,23 @@ const browserSingleton = async () => {
   } = process.env
 
   if (PUPPETEER_BROWSER_ENDPOINT || PUPPETEER_WS_ENDPOINT) {
-    return puppeteer.connect({
+    logger.debug({
+      browserEndpoint: PUPPETEER_BROWSER_ENDPOINT,
+      browserWsEndpoint: PUPPETEER_WS_ENDPOINT,
+    }, 'Connecting to existing browser')
+
+    const newBrowser = await puppeteer.connect({
       browserURL: PUPPETEER_BROWSER_ENDPOINT,
       browserWSEndpoint: PUPPETEER_WS_ENDPOINT,
       acceptInsecureCerts: true,
       defaultViewport: null,
     })
+
+    globalForPuppeteer.puppeteerBrowser = newBrowser
+    return newBrowser
   }
 
+  logger.debug('Launching new browser')
   const newBrowser = await puppeteer.launch({
     acceptInsecureCerts: true,
     headless: false,
