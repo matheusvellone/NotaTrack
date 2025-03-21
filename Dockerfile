@@ -1,8 +1,11 @@
 ARG NODE_VERSION=22
 
-FROM node:${NODE_VERSION}-alpine AS dev
+FROM node:${NODE_VERSION}-alpine AS base
 WORKDIR /app
 
+RUN apk add --no-cache tzdata
+
+FROM base AS dev
 ENV NODE_ENV=development
 
 COPY package*.json ./
@@ -15,42 +18,36 @@ RUN npx prisma generate
 
 CMD ["npm", "run", "dev"]
 
-FROM node:${NODE_VERSION}-alpine AS builder
-WORKDIR /app
-
-ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true NODE_ENV=production
+FROM base AS builder
 
 COPY package*.json ./
-
 RUN npm ci
 
 COPY . .
 
+ENV NODE_ENV=production
 RUN npx prisma generate
 RUN npm run build
 RUN rm -rf .next/cache
+RUN npm prune
 
-FROM node:${NODE_VERSION}-alpine AS runner
-WORKDIR /app
-
-RUN apk add --no-cache tzdata
-
-USER node
-
+FROM base AS runner
 ENV NODE_ENV=production
 
 COPY --from=builder /app/package*.json ./
-RUN npm ci --only=production
 
 COPY --from=builder /app/next.config.ts .
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/src ./src
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+
 COPY --from=builder /app/prisma ./prisma
 
-EXPOSE 3000
+COPY --from=builder /app/public ./public
+
+EXPOSE ${PORT:-3000}
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3000}/api/status || exit 1
+  CMD wget --tries=1 --spider http://$HOSTNAME:${PORT:-3000}/api/status || exit 1
 
-CMD ["npm", "start"]
+USER node
+CMD ["node", "server.js"]
