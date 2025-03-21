@@ -4,6 +4,7 @@
 - Importar notas fiscais emitidas no CPF
 - Buscar dados de notas fiscais emitidas no CPF. Cadastrando lojas, produtos e seus preços
 - Importar notas fiscais utilizando o QrCode da nota
+- Em alguns casos o captcha é resolvido automaticamente sem a necessidade de intervenção manual ou utilização do 2Captcha
 
 Add images
 
@@ -23,16 +24,19 @@ Add images
   ```
 - Acesse o endereço `http://localhost:3000`
 
-## Configuration
+## Configurações
 
 As configurações são feitas via variáveis de ambiente
 
-|Nome|Descrição|Obrigatório|
-|---|---|---|
-|NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend|false|
-|PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`|obrigatório se `PUPPETEER_WS_ENDPOINT` não estiver configurado|
-|PUPPETEER_WS_ENDPOINT||obrigatório se `PUPPETEER_WS_ENDPOINT` não estiver configurado|
-|TWO_CAPTCHA_API_KEY|Api Key do serviço [2Captcha](http://2captcha.com/) para quebra automática do Captcha|false|
+|Nome|Descrição|
+|---|---|
+|NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend|
+|PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`|
+|PUPPETEER_WS_ENDPOINT||
+|TWO_CAPTCHA_API_KEY|Api Key do serviço [2Captcha](http://2captcha.com/) para quebra automática do Captcha quando necessário. Caso não exista, será necessário o captcha manualmente* |
+
+`PUPPETEER_BROWSER_ENDPOINT` e `PUPPETEER_WS_ENDPOINT` são variáveis de ambiente opcionais, porém seu uso é recomendado.
+Quando uma das duas variáveis de ambiente é definida, a aplicação irá utilizar o navegador já existente. Caso contrário, um novo navegador será aberto.
 
 ## Limitações
 ### Tanto a importação de notas fiscais quanto a busca dos dados das mesmas são protegidas por captcha
@@ -44,12 +48,6 @@ O suporte para novos estados pode ser adicionado conforme a necessidade
 ### As interfaces Web das notas fiscais não expõem dados identificadores, como o código de barras, portanto a correlação de produtos não é automatizável
 Alguns provedores pagos, como o [InfoSimples](https://infosimples.com/) fornecem tais dados, porém é uma API paga.
 
-## Configurações
-Para configurar as opções da aplicação, crie um arquivo `.env` na raiz do projeto com as seguintes variáveis de ambiente:
-- `TWO_CAPTCHA_API_KEY` (opcional): Chave de API do 2Captcha. Se existir, a aplicação irá utilizar o serviço para quebrar captchas. Caso contrário, um browser será aberto para que o usuário possa resolver o captcha manualmente.
-- `PUPPETEER_BROWSER_ENDPOINT` ou `PUPPETEER_WS_ENDPOINT` (opcionais): Endpoints do browser do Puppeteer. Se existirem, a aplicação irá utilizar o browser já existente. Caso contrário, um novo browser será aberto.
-- `NEXT_PUBLIC_DEBUG` (opcional): Colocar como `true` habilitará o modo de debug, que exibirá informações adicionais no console do navegador e no terminal do server.
-
 ### Utilizando o próprio navegador como browser da aplicação
 
 #### Chrome
@@ -57,11 +55,13 @@ Para configurar as opções da aplicação, crie um arquivo `.env` na raiz do pr
 Inicialize o Chrome com a flag `--remote-debugging-port=9222` e configure a variável de ambiente `PUPPETEER_BROWSER_ENDPOINT` com o valor `http://localhost:9222`.
 
 ## TODOs
+- [ ] Suportar outros bancos de dados (Postgres)
+  - [ ] Suportar mais de 1 banco?
 - [ ] Adicionar suporte para mais estados
 - [ ] Permitir _merge_ de produtos
 - [ ] Relatórios
   - [ ] Produtos comprados no mês (com valor total)
   - [ ] Lojas mais frequentadas
   - [ ] Produtos mais comprados
-- [ ] Possibilidade de rodar o projeto via Docker
+- [ ] Capacidade de rodar um browser como container que sirva uma interface web
 - [ ] Permitir o uso de outros bancos de dados
