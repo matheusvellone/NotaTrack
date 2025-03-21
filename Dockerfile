@@ -32,9 +32,10 @@ RUN rm -rf .next/cache
 
 FROM node:${NODE_VERSION}-alpine AS runner
 WORKDIR /app
-USER node
 
 RUN apk add --no-cache tzdata
+
+USER node
 
 ENV NODE_ENV=production
 
