@@ -23,6 +23,17 @@ Add images
   ```
 - Acesse o endereço `http://localhost:3000`
 
+## Configuration
+
+As configurações são feitas via variáveis de ambiente
+
+|Nome|Descrição|Obrigatório|
+|---|---|---|
+|NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend|false|
+|PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`|obrigatório se `PUPPETEER_WS_ENDPOINT` não estiver configurado|
+|PUPPETEER_WS_ENDPOINT||obrigatório se `PUPPETEER_WS_ENDPOINT` não estiver configurado|
+|TWO_CAPTCHA_API_KEY|Api Key do serviço [2Captcha](http://2captcha.com/) para quebra automática do Captcha|false|
+
 ## Limitações
 ### Tanto a importação de notas fiscais quanto a busca dos dados das mesmas são protegidas por captcha
 Isso dificulta a automação desses processos ou requer a utilização de serviços de terceiros para quebrar o captcha (como o [2Captcha](https://2captcha.com/)).
