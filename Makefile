@@ -1,5 +1,11 @@
 include ./node_modules/@vellone/techsak/Makefile
 
+DOCKER_COMPOSE = docker compose
+
+.PHONY: setup
+setup: ## Setup local environment for development
+	@$(DOCKER_COMPOSE) up -d postgres
+
 .PHONY: app
 app: ## Build the app
 	@npm run dev
