@@ -54,6 +54,8 @@ const browserSingleton = async () => {
       defaultViewport: null,
     })
 
+    logger.debug('Connected to browser')
+
     globalForPuppeteer.puppeteerBrowser = newBrowser
     return newBrowser
   }
@@ -68,6 +70,7 @@ const browserSingleton = async () => {
       '--disable-dev-shm-usage',
     ],
   })
+  logger.debug('Launched new browser')
 
   globalForPuppeteer.puppeteerBrowser = newBrowser
   return newBrowser

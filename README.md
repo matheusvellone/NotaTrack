@@ -28,15 +28,18 @@ Add images
 
 As configurações são feitas via variáveis de ambiente
 
-|Nome|Descrição|
-|---|---|
-|NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend|
-|PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`|
-|PUPPETEER_WS_ENDPOINT||
-|TWO_CAPTCHA_API_KEY|Api Key do serviço [2Captcha](http://2captcha.com/) para quebra automática do Captcha quando necessário. Caso não exista, será necessário o captcha manualmente* |
+|Nome|Descrição|Valor padrão|
+|---|---|---|
+|NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend||
+|PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`||
+|PUPPETEER_WS_ENDPOINT|||
+|TWO_CAPTCHA_API_KEY|Api Key do serviço [2Captcha](http://2captcha.com/) para quebra automática do Captcha quando necessário. Caso não exista, será necessário o captcha manualmente* ||
+|PORT|The port to listen on|3000|
 
 `PUPPETEER_BROWSER_ENDPOINT` e `PUPPETEER_WS_ENDPOINT` são variáveis de ambiente opcionais, porém seu uso é recomendado.
 Quando uma das duas variáveis de ambiente é definida, a aplicação irá utilizar o navegador já existente. Caso contrário, um novo navegador será aberto.
+
+> Porém, rodar a aplicação como um container Docker, impede que um novo navegador seja aberto. Neste caso, caso o Captcha não seja resolvido automaticamente e a variável `TWO_CAPTCHA_API_KEY` não esteja definida, o processo de importação de notas fiscais será interrompido.
 
 ## Limitações
 ### Tanto a importação de notas fiscais quanto a busca dos dados das mesmas são protegidas por captcha
