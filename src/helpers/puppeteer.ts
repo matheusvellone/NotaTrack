@@ -109,7 +109,23 @@ export const solveCaptcha = async (page: Page, parentCaptchaSelector: string) =>
     throw new Error('Captcha iframe not found')
   }
 
-  await captchaIframe.click('#recaptcha-anchor')
+  const anchorElement = await captchaIframe.$('#recaptcha-anchor')
+
+  if (!anchorElement) {
+    throw new Error('Captcha anchor element not found')
+  }
+
+  const {
+    height = 28,
+    width = 28,
+  } = await anchorElement.boundingBox() || {}
+
+  await anchorElement.click({
+    offset: {
+      x: Math.random() * width,
+      y: Math.random() * height,
+    },
+  })
 
   const captchaSolved = await page.evaluate(isCaptchaSolved)
 
