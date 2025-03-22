@@ -1,13 +1,13 @@
 'use client'
 
 import { PropsWithChildren } from 'react'
-import { AppShell, Burger, Group, NavLink, Text, Title } from '@mantine/core'
+import { ActionIcon, AppShell, Burger, Group, NavLink, Text, Title } from '@mantine/core'
 import { useDisclosure } from '@mantine/hooks'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { version } from '~/app'
 import { SHORT_HASH_VERSION } from '~/helpers/env'
-import { IconBox, IconBuildingStore, IconInvoice, IconPlus } from '@tabler/icons-react'
+import { IconBox, IconBrandGithub, IconBuildingStore, IconInvoice, IconPlus } from '@tabler/icons-react'
 import ColorThemeSwitch from '~/components/ColorThemeSwitch'
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
@@ -32,7 +32,16 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             <Burger opened={desktopOpened} onClick={toggleDesktop} visibleFrom="sm" size="sm" />
             <Title lineClamp={1}>NotaTrack</Title>
           </Group>
-          <ColorThemeSwitch/>
+          <Group>
+            <ColorThemeSwitch/>
+            <ActionIcon
+              component={Link}
+              href='https://github.com/matheusvellone/notatrack'
+              variant='default'
+            >
+              <IconBrandGithub size={16}/>
+            </ActionIcon>
+          </Group>
         </Group>
       </AppShell.Header>
 
