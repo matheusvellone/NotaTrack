@@ -50,4 +50,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD wget --tries=1 --spider http://$HOSTNAME:${PORT:-3000}/api/status || exit 1
 
 USER node
-CMD ["node", "server.js"]
+CMD npx--yes prisma migrate deploy; node server.js
