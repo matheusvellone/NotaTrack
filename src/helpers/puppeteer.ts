@@ -101,6 +101,8 @@ const isCaptchaSolved = () => {
   return recaptchaResponse.length > 0
 }
 
+const CAPTCHA_SIZE = 28
+
 export const solveCaptcha = async (page: Page, parentCaptchaSelector: string) => {
   const captchaIframeElement = await page.waitForSelector(`${parentCaptchaSelector} iframe`)
   const captchaIframe = await captchaIframeElement?.contentFrame()
@@ -109,7 +111,12 @@ export const solveCaptcha = async (page: Page, parentCaptchaSelector: string) =>
     throw new Error('Captcha iframe not found')
   }
 
-  await captchaIframe.click('#recaptcha-anchor')
+  await captchaIframe.click('#recaptcha-anchor', {
+    offset: {
+      x: CAPTCHA_SIZE / 2 + Math.floor(Math.random() * CAPTCHA_SIZE) - CAPTCHA_SIZE / 2,
+      y: CAPTCHA_SIZE / 2 + Math.floor(Math.random() * CAPTCHA_SIZE) - CAPTCHA_SIZE / 2,
+    },
+  })
 
   const captchaSolved = await page.evaluate(isCaptchaSolved)
 
