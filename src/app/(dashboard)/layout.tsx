@@ -51,7 +51,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
       >
         <AppShell.Section grow>
           <NavLink
-            label='New invoice'
+            label='Nova nota'
             leftSection={<IconPlus size={16}/>}
             component={Link}
             active={pathname === '/invoices/new'}
@@ -59,7 +59,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             onClick={closeMobile}
           />
           <NavLink
-            label='Invoices'
+            label='Notas'
             leftSection={<IconInvoice size={16}/>}
             component={Link}
             active={pathname === '/invoices'}
@@ -67,7 +67,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             onClick={closeMobile}
           />
           <NavLink
-            label='Stores'
+            label='Lojas'
             leftSection={<IconBuildingStore size={16}/>}
             component={Link}
             active={pathname === '/stores'}
@@ -75,7 +75,7 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
             onClick={closeMobile}
           />
           <NavLink
-            label='Products'
+            label='Produtos'
             leftSection={<IconBox size={16}/>}
             component={Link}
             active={pathname === '/products'}
