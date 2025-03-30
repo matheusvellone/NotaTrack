@@ -1,4 +1,4 @@
-import { ProductUnit } from '@prisma/client'
+import { ProductUnit } from '~/database/schema'
 import { InvoiceAccessKey } from '~/helpers/types'
 
 export type ProcessInvoiceOutputProduct = {
@@ -13,7 +13,7 @@ export type ProcessInvoiceOutputProduct = {
   discount: number | null
 }
 
-export type ProcessInvoiceOutput = {
+type ProcessInvoiceOutput = {
   accessKey: string
   storeCNPJ: string
   storeName: string
@@ -28,4 +28,4 @@ export type ImportInvoiceInput = {
   password: string
 }
 
-export type ImportInvoice = (input: ImportInvoiceInput) => Promise<string[]>
+export type ImportInvoice = (input: ImportInvoiceInput) => Promise<InvoiceAccessKey[]>

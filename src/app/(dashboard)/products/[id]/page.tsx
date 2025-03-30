@@ -49,10 +49,12 @@ const ProductDetail = ({ params }: Props) => {
       </Group>
       <Table striped>
         <Table.Thead>
-          <Table.Th>Nota Fiscal</Table.Th>
-          <Table.Th>Data da compra</Table.Th>
-          <Table.Th>Valor pago</Table.Th>
-          <Table.Th>Quantidade</Table.Th>
+          <Table.Tr>
+            <Table.Th>Nota Fiscal</Table.Th>
+            <Table.Th>Data da compra</Table.Th>
+            <Table.Th>Valor pago</Table.Th>
+            <Table.Th>Quantidade</Table.Th>
+          </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
           {

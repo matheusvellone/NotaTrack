@@ -17,7 +17,7 @@ export const notFound = {
 } as const
 
 export const uniqueConstraint = {
-  'Invoice.access_key': '1300',
+  'Invoice.accessKey': '1300',
 } as const
 
 export const errorCode = {

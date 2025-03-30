@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon'
 import { ProcessInvoice } from '../../../types'
 import { ProcessInvoiceOutputProduct } from '~/invoiceProvider/types'
-import { ProductUnit } from '@prisma/client'
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { Promise } from 'bluebird'
 import { isDevelopment } from '~/helpers/env'
+import { ProductUnit } from '~/database/schema'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit?.includes('KG')) {
@@ -98,6 +98,12 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
           discount,
         }
       }
+    })
+
+    const screenshotFilename = `success-${DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss')}-${invoiceAccessKey}`
+    await page.screenshot({
+      fullPage: true,
+      path: `screenshots/${screenshotFilename}.png`,
     })
 
     return {

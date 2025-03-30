@@ -1,9 +1,9 @@
 import { ProcessInvoiceOutputProduct, ProcessInvoice } from '../../../types'
-import { ProductUnit } from '@prisma/client'
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { DateTime } from 'luxon'
 import { isDevelopment } from '~/helpers/env'
+import { ProductUnit } from '~/database/schema'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit === 'KG') {

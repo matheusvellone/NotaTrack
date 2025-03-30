@@ -2,10 +2,10 @@
 
 import { Anchor, Button, Group, Select, Stack } from '@mantine/core'
 import { useSetState } from '@mantine/hooks'
-import { InvoiceStatus } from '@prisma/client'
 import Link from 'next/link'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
+import { InvoiceStatus } from '~/database/schema'
 import { isValidEnumValue } from '~/helpers/enum'
 import { trpc } from '~/helpers/trpc'
 import { InvoiceAccessKey } from '~/helpers/types'
@@ -65,32 +65,32 @@ const InvoicesList = () => {
       </Group>
       {
         invoices.map((invoice) => (
-          <Group key={invoice.id}>
+          <Group key={invoice.invoices.id}>
             {
-              invoice.emissionDate ? (
-                <Date date={invoice.emissionDate}/>
+              invoice.invoices.emissionDate ? (
+                <Date date={invoice.invoices.emissionDate}/>
               ) : null
             }
             {
-              invoice.store ? (
+              invoice.stores ? (
                 <Anchor
                   component={Link}
-                  href={`/stores/${invoice.store.id}`}
+                  href={`/stores/${invoice.stores.id}`}
                 >
-                  {invoice.store.name}
+                  {invoice.stores.name}
                 </Anchor>
               ) : null
             }
             <Anchor
               component={Link}
-              href={`/invoices/${invoice.id}`}
+              href={`/invoices/${invoice.invoices.id}`}
             >
-              {invoice.accessKey}
+              {invoice.invoices.accessKey}
             </Anchor>
-            <InvoiceStatusBadge status={invoice.status} />
+            <InvoiceStatusBadge status={invoice.invoices.status} />
             {
-              invoice.status === InvoiceStatus.PROCESSED ? null : (
-                <Button onClick={() => void reprocessInvoice(invoice.accessKey)}>
+              invoice.invoices.status === InvoiceStatus.PROCESSED ? null : (
+                <Button onClick={() => void reprocessInvoice(invoice.invoices.accessKey)}>
                   Reprocessar
                 </Button>
               )

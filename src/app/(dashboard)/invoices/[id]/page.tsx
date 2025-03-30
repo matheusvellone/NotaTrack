@@ -1,11 +1,11 @@
 'use client'
 
 import { Button, Group, SimpleGrid, Stack, Text } from '@mantine/core'
-import { InvoiceStatus } from '@prisma/client'
 import { use } from 'react'
 import Amount from '~/components/Amount'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
+import { InvoiceStatus } from '~/database/schema'
 import { trpc } from '~/helpers/trpc'
 import invoiceSchema from '~/schemas/invoice'
 

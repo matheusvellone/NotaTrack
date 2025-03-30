@@ -1,9 +1,10 @@
 import { z, ZodType } from 'zod'
-import { CNPJ, CPF, InvoiceAccessKey } from './types'
+import { CNPJ, CPF, ID, InvoiceAccessKey } from './types'
 import { cpf, cnpj } from 'cpf-cnpj-validator'
+import { ModelName } from '~/database/schema'
 
-export const buildModelIdSchema = <Model extends { id: number }>() => {
-  return z.number().min(1) as ZodType<Model['id']>
+export const buildModelIdSchema = <Model extends ModelName>() => {
+  return z.number().min(1) as unknown as ZodType<ID<Model>>
 }
 
 export const nfeAccessKeySchema = z.custom<InvoiceAccessKey>((value) => {

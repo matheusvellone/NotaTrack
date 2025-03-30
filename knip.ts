@@ -5,9 +5,7 @@ const config: KnipConfig = {
     'nsExports',
     'nsTypes',
   ],
-  ignoreDependencies: [
-    'prisma-dbml-generator',
-  ],
+  ignoreDependencies: [  ],
 }
 
 export default config

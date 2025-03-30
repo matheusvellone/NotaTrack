@@ -3,8 +3,9 @@ import { UF } from '~/helpers/uf'
 import uf from './uf'
 import { z } from 'zod'
 import { cnpjRule, nfeAccessKeySchema } from '~/helpers/zod'
-import { ProductUnit } from '@prisma/client'
 import logger from '~/helpers/logger'
+import { getEnumValues } from '~/helpers/enum'
+import { ProductUnit } from '~/database/schema'
 
 type UFMapping = Partial<Record<string, UF>>
 
@@ -63,7 +64,7 @@ const schema = z.object({
     storeCode: z.string().min(1),
     ean: z.string().nullable(),
     name: z.string().min(1),
-    unit: z.nativeEnum(ProductUnit),
+    unit: z.enum(getEnumValues(ProductUnit)),
     quantity: z.number().positive(),
     price: z.number().int().positive(),
     unitPrice: z.number().int().positive(),

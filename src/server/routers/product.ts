@@ -1,32 +1,32 @@
-import { prisma } from '~/database'
 import { publicProcedure } from '../trpc'
-import { Invoice, InvoiceProduct, Product } from '~/entities'
-import { buildModelIdSchema } from '~/helpers/zod'
-
-const idRule = buildModelIdSchema<Product>()
+import db from '~/database/index'
+import ModelNotFoundError from '~/Errors/trpc/ModelNotFoundError'
+import productSchema from '~/schemas/product'
 
 export const list = publicProcedure
   .query(() => {
-    return prisma.product.findMany()
+    return db.query.productTable.findMany()
   })
 
 export const show = publicProcedure
-  .input(idRule)
+  .input(productSchema.id)
   .query(async ({ input }) => {
-    return await prisma.product.findFirstOrThrow({
-      where: {
-        id: input,
+    const product = await db.query.productTable.findFirst({
+      where: (fields, { eq }) => {
+        return eq(fields.id, input)
       },
-      include: {
+      with: {
         invoiceProducts: {
-          include: {
+          with: {
             invoice: true,
           },
         },
       },
-    }) as Product & {
-      invoiceProducts: Array<InvoiceProduct & {
-        invoice: Invoice
-      }>
+    })
+
+    if (!product) {
+      throw new ModelNotFoundError('Product')
     }
+
+    return product
   })

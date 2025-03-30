@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio'
 import { ImportInvoice } from '~/invoiceProvider/types'
 import { isDevelopment } from '~/helpers/env'
 import { DateTime } from 'luxon'
+import { InvoiceAccessKey } from '~/helpers/types'
 
 const importInvoices: ImportInvoice = async (input) => {
   const page = await openPage('https://www.nfp.fazenda.sp.gov.br/Inicio.aspx')
@@ -52,7 +53,7 @@ const importInvoices: ImportInvoice = async (input) => {
       await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
     }
 
-    const invoices: string[] = []
+    const invoices: InvoiceAccessKey[] = []
 
     let processPage = true
     while (processPage) {

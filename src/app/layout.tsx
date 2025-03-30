@@ -1,13 +1,9 @@
-'use client'
-
 import { Viewport } from 'next'
 import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core'
 import '@mantine/core/styles.css'
 import { PropsWithChildren } from 'react'
 import { Notifications } from '@mantine/notifications'
 import RouterTransition from '~/components/RouterTransition'
-import { ModalsProvider } from '@mantine/modals'
-import { trpc } from '~/helpers/trpc'
 
 const RootLayout = ({ children }: PropsWithChildren) => {
   return (
@@ -21,16 +17,14 @@ const RootLayout = ({ children }: PropsWithChildren) => {
         >
           <RouterTransition/>
           <Notifications autoClose={5000} position='top-right'/>
-          <ModalsProvider>
-            {children}
-          </ModalsProvider>
+          {children}
         </MantineProvider>
       </body>
     </html>
   )
 }
 
-export default trpc.withTRPC(RootLayout)
+export default RootLayout
 
 export const viewport: Viewport = {
   themeColor: [
