@@ -2,10 +2,10 @@
 
 import { Anchor, Button, Group, Select, Stack } from '@mantine/core'
 import { useSetState } from '@mantine/hooks'
-import { InvoiceStatus } from '@prisma/client'
 import Link from 'next/link'
 import Date from '~/components/Date'
 import InvoiceStatusBadge from '~/components/InvoiceStatusBadge'
+import { InvoiceStatus } from '~/database/schema'
 import { isValidEnumValue } from '~/helpers/enum'
 import { trpc } from '~/helpers/trpc'
 import { InvoiceAccessKey } from '~/helpers/types'

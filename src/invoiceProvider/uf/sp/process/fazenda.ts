@@ -1,9 +1,9 @@
 import { ProcessInvoiceOutputProduct, ProcessInvoice } from '../../../types'
-import { ProductUnit } from '@prisma/client'
 import { openPage, solveCaptcha } from '~/helpers/puppeteer'
 import * as cheerio from 'cheerio'
 import { DateTime } from 'luxon'
 import { isDevelopment } from '~/helpers/env'
+import { ProductUnit } from '~/database/schema'
 
 const parseUnit = (unit: string | undefined) => {
   if (unit === 'KG') {
@@ -29,16 +29,20 @@ const fazenda: ProcessInvoice = async (invoiceAccessKey) => {
     const invoiceQueryButton = await page.$('#btnNovaConsulta')
 
     if (invoiceQueryButton) {
-      await invoiceQueryButton.click()
-      await page.waitForNavigation({ waitUntil: 'networkidle0' })
+      await Promise.all([
+        invoiceQueryButton.click(),
+        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+      ])
     }
 
     await page.locator('#Conteudo_txtChaveAcesso').fill(invoiceAccessKey)
 
     await solveCaptcha(page, '.g-recaptcha')
 
-    await page.locator('#Conteudo_btnConsultaResumida').click()
-    await page.waitForNavigation({ waitUntil: 'networkidle0' })
+    await Promise.all([
+      page.click('#Conteudo_btnConsultaResumida'),
+      page.waitForNavigation({ waitUntil: 'networkidle0' }),
+    ])
 
     const pageContent = await page.content()
     const $ = cheerio.load(pageContent)

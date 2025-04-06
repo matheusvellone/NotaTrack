@@ -30,6 +30,7 @@ As configurações são feitas via variáveis de ambiente
 
 |Nome|Descrição|Valor padrão|
 |---|---|---|
+|DATABASE_URL|String de conexão para o Postgres `postgresql://postgres:postgres@localhost:5432/postgres`||
 |NEXT_PUBLIC_DEBUG|Habilita logs de debug tanto no backend quanto no frontend||
 |PUPPETEER_BROWSER_ENDPOINT|Endpoint do navegador para ser utilizado. Para utilizar o Google Chrome é necessário iniciá-lo com `--remote-debugging-port=9222`||
 |PUPPETEER_WS_ENDPOINT|||

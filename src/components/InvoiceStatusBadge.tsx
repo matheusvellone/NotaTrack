@@ -1,5 +1,5 @@
 import { Badge } from '@mantine/core'
-import { InvoiceStatus } from '@prisma/client'
+import { InvoiceStatus } from '~/database/schema'
 import { assertNever } from '~/helpers/types'
 
 type Props = {

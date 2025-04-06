@@ -7,7 +7,7 @@ import SubmitButton from './SubmitButton'
 import { IconCamera } from '@tabler/icons-react'
 import { useState } from 'react'
 import QrCodeScanner from './QrCodeScanner'
-import { nfeAccessKeySchema } from '~/helpers/zod'
+import { invoiceAccessKeySchema } from '~/helpers/zod'
 import logger from '~/helpers/logger'
 
 type Form = {
@@ -63,7 +63,7 @@ const ManualInvoiceImporter = ({
     const accessKey = data[0]?.match(/\d{44}/)?.[0]
     logger.debug({ accessKey }, 'Access Key')
 
-    return nfeAccessKeySchema.parse(accessKey)
+    return invoiceAccessKeySchema.parse(accessKey)
   }
 
   return (

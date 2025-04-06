@@ -5,10 +5,6 @@ import { cnpjRule, cpfRule } from './zod'
 
 export const randomId = () => Math.random().toString(36).slice(2)
 
-export const pluralize = (count: number, singular: string, plural = `${singular}s`) => {
-  return count === 1 ? singular : plural
-}
-
 export const formatDocumentNumber = (document: DocumentNumber) => {
   const {
     success: isCPF,

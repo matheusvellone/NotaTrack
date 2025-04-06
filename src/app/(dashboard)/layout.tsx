@@ -9,6 +9,8 @@ import { version } from '~/app'
 import { SHORT_HASH_VERSION } from '~/helpers/env'
 import { IconBox, IconBrandGithub, IconBuildingStore, IconInvoice, IconPlus } from '@tabler/icons-react'
 import ColorThemeSwitch from '~/components/ColorThemeSwitch'
+import { ModalsProvider } from '@mantine/modals'
+import { trpc } from '~/helpers/trpc'
 
 const DashboardLayout = ({ children }: PropsWithChildren) => {
   const pathname = usePathname()
@@ -94,4 +96,11 @@ const DashboardLayout = ({ children }: PropsWithChildren) => {
   )
 }
 
-export default DashboardLayout
+const LayoutShell = ({ children }: PropsWithChildren) => (
+  <ModalsProvider>
+    <DashboardLayout>
+      {children}
+    </DashboardLayout>
+  </ModalsProvider>
+)
+export default trpc.withTRPC(LayoutShell)

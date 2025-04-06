@@ -1,11 +1,13 @@
-export declare const _brand: unique symbol
+import { ModelName } from '~/database/schema'
+
+declare const _brand: unique symbol
 
 export type CPF = string & { [_brand]: 'cpf' }
 export type CNPJ = string & { [_brand]: 'cnpj' }
 
 export type DocumentNumber = CPF | CNPJ
 
-export type ID<Model> = number & { [_brand]: Model }
+export type ID<Model extends ModelName> = number & { [_brand]: Model }
 
 export type InvoiceAccessKey = string & { [_brand]: 'InvoiceAccessKey' }
 

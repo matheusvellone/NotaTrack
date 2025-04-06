@@ -1,6 +1,9 @@
 export const internal = '1'
 
-export const application = {} as const
+export const application = {
+  'unsupported.uf': '1000',
+  'unsupported.uf.import': '1001',
+} as const
 
 export const invalid = {
   input: '1100',
@@ -17,20 +20,11 @@ export const notFound = {
 } as const
 
 export const uniqueConstraint = {
-  'Invoice.access_key': '1300',
+  'Invoice.accessKey': '1300',
 } as const
-
-export const errorCode = {
-  internal,
-  application,
-  notFound,
-  invalid,
-  uniqueConstraint,
-}
 
 export type ErrorCode =
   | typeof internal
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   | typeof application[keyof typeof application]
   | typeof notFound[keyof typeof notFound]
   | typeof invalid[keyof typeof invalid]
@@ -38,6 +32,9 @@ export type ErrorCode =
 
 export const errorMessages: Record<ErrorCode, string> = {
   1: 'Internal Server Error',
+
+  1000: 'Estado não suportado',
+  1001: 'Estado não suportado para importação',
 
   1100: 'Validation error',
 

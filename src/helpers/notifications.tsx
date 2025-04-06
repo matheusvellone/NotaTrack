@@ -6,13 +6,14 @@ import { IconAlertTriangle, IconCircleCheck, IconExclamationCircle, IconInfoCirc
 import { randomId } from '~/helpers/string'
 import '@mantine/notifications/styles.css'
 
-export enum NotificationType {
-  SUCCESS,
-  ERROR,
-  INFO,
-  WARN,
-  LOADING,
-}
+export const NotificationType = {
+  SUCCESS: 'success',
+  ERROR: 'error',
+  INFO: 'info',
+  WARN: 'warn',
+  LOADING: 'loading',
+} as const
+export type NotificationType = typeof NotificationType[keyof typeof NotificationType]
 
 const defaultOptions: Record<NotificationType, Partial<NotificationData>> = {
   [NotificationType.SUCCESS]: {
@@ -78,7 +79,7 @@ const getErrorMessage = (error: unknown) => {
   return JSON.stringify(error)
 }
 
-export const notificateError = (title: string, error: unknown) => showNotification(NotificationType.ERROR, {
+const notificateError = (title: string, error: unknown) => showNotification(NotificationType.ERROR, {
   title,
   message: getErrorMessage(error),
 })

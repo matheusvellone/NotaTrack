@@ -18,7 +18,7 @@ puppeteer.use(
   RecaptchaPlugin({
     provider: { id: '2captcha', token: TWO_CAPTCHA_API_KEY },
     visualFeedback: true,
-  }),
+  })
 )
 
 const globalForPuppeteer = globalThis as unknown as {

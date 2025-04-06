@@ -6,11 +6,11 @@ import {
   process as processInvoice,
   show as showInvoice,
 } from '~/services/invoice'
-import { prisma } from '~/database'
 import { ufSchema } from '~/helpers/uf'
 import invoiceSchema from '~/schemas/invoice'
-import { Invoice, Store } from '~/entities'
-import { InvoiceStatus } from '@prisma/client'
+import db from '~/database/index'
+import { InvoiceStatus } from '~/database/schema'
+import { getEnumValues } from '~/helpers/enum'
 
 const nfceAccessKeySchema = z.custom<InvoiceAccessKey>((value) => {
   if (typeof value !== 'string') {
@@ -31,21 +31,23 @@ export const process = publicProcedure
   })
 
 const listSchema = z.object({
-  status: z.nativeEnum(InvoiceStatus).nullable().optional(),
+  status: z.enum(getEnumValues(InvoiceStatus)).nullable().optional(),
 })
 export const list = publicProcedure
   .input(listSchema)
   .query(async ({ input }) => {
-    return await prisma.invoice.findMany({
-      include: {
+    return db.query.invoiceTable.findMany({
+      where: (fields, { eq }) => {
+        if (!input.status) {
+          return
+        }
+
+        return eq(fields.status, input.status)
+      },
+      with: {
         store: true,
       },
-      where: {
-        status: input.status ?? undefined,
-      },
-    }) as Array<Invoice & {
-      store: Store | null
-    }>
+    })
   })
 
 const showSchema = z.object({

@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio'
 import { ImportInvoice } from '~/invoiceProvider/types'
 import { isDevelopment } from '~/helpers/env'
 import { DateTime } from 'luxon'
+import { InvoiceAccessKey } from '~/helpers/types'
+import { invoiceAccessKeySchema } from '~/helpers/zod'
 
 const importInvoices: ImportInvoice = async (input) => {
   const page = await openPage('https://www.nfp.fazenda.sp.gov.br/Inicio.aspx')
@@ -34,9 +36,11 @@ const importInvoices: ImportInvoice = async (input) => {
     const firstLinkOnClick = await firstLink.evaluate((el) => el.getAttribute('onclick'))
 
     if (!firstLinkOnClick) {
-      await page.click('#gdvConsulta tbody tr:nth-child(2) a')
-      // Wait for confirmation modal to open
-      await page.waitForNavigation({ waitUntil: 'networkidle0' })
+      // Click to trigger confirmation modal
+      await Promise.all([
+        page.click('#gdvConsulta tbody tr:nth-child(2) a'),
+        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+      ])
 
       // Wait for code input
       await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
@@ -47,12 +51,14 @@ const importInvoices: ImportInvoice = async (input) => {
         throw new Error(errorText)
       }
 
-      // TODO: clicar no botao
       // Wait for page load after closing modal
-      await page.waitForNavigation({ timeout: 0, waitUntil: 'networkidle0' })
+      await Promise.all([
+        page.click('.ui-dialog > .ui-dialog-buttonpane > .ui-dialog-buttonset > button'),
+        page.waitForNavigation({ waitUntil: 'networkidle0' }),
+      ])
     }
 
-    const invoices: string[] = []
+    const invoices: InvoiceAccessKey[] = []
 
     let processPage = true
     while (processPage) {
@@ -75,7 +81,7 @@ const importInvoices: ImportInvoice = async (input) => {
           throw new Error('Access key not found')
         }
 
-        invoices.push(accessKey)
+        invoices.push(invoiceAccessKeySchema.parse(accessKey))
       })
 
       const nextPageButton = await page.$('#lkBtnProxima')
