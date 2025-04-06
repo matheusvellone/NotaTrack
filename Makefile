@@ -1,5 +1,8 @@
 include ./node_modules/@vellone/techsak/Makefile
 
+include .env
+export
+
 DOCKER_COMPOSE = docker compose
 
 .PHONY: setup

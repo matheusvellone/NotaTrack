@@ -25,14 +25,13 @@ COPY . .
 
 ENV NODE_ENV=production
 RUN npm run build
-RUN rm -rf .next/cache
-RUN npm prune
 
 FROM base AS runner
 ENV NODE_ENV=production
 
-COPY --from=builder /app/package*.json ./
+RUN npm install drizzle-kit drizzle-orm
 
+COPY --from=builder /app/drizzle drizzle
 COPY --from=builder /app/next.config.ts .
 COPY --from=builder /app/drizzle.config.ts .
 COPY --from=builder /app/.next/standalone ./
@@ -46,4 +45,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD wget --tries=1 --spider http://$HOSTNAME:${PORT:-3000}/api/status || exit 1
 
 USER node
-CMD npx --yes drizzle-kit migrate; node server.js
+CMD npx drizzle-kit migrate; node server.js
