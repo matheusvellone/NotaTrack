@@ -8,6 +8,8 @@ import { Promise } from 'bluebird'
 import type { Browser, Page } from 'puppeteer'
 import logger from './logger'
 
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.app'
+
 const {
   TWO_CAPTCHA_API_KEY,
 } = process.env
