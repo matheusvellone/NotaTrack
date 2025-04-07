@@ -24,6 +24,7 @@ import 'puppeteer-extra-plugin-stealth/evasions/sourceurl'
 import 'puppeteer-extra-plugin-stealth/evasions/user-agent-override'
 import 'puppeteer-extra-plugin-stealth/evasions/webgl.vendor'
 import 'puppeteer-extra-plugin-stealth/evasions/window.outerdimensions'
+import 'puppeteer-extra-plugin-stealth/evasions/defaultArgs'
 
 const {
   TWO_CAPTCHA_API_KEY,
