@@ -9,6 +9,7 @@ import type { Browser, Page } from 'puppeteer'
 import logger from './logger'
 
 import 'puppeteer-extra-plugin-stealth/evasions/chrome.app'
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.csi'
 
 const {
   TWO_CAPTCHA_API_KEY,
