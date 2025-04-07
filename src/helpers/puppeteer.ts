@@ -10,6 +10,7 @@ import logger from './logger'
 
 import 'puppeteer-extra-plugin-stealth/evasions/chrome.app'
 import 'puppeteer-extra-plugin-stealth/evasions/chrome.csi'
+import 'puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes'
 
 const {
   TWO_CAPTCHA_API_KEY,

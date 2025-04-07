@@ -99,12 +99,6 @@ const satsp: ProcessInvoice = async (invoiceAccessKey) => {
       }
     })
 
-    const screenshotFilename = `success-${DateTime.now().toFormat('yyyy-MM-dd_HH-mm-ss')}-${invoiceAccessKey}`
-    await page.screenshot({
-      fullPage: true,
-      path: `screenshots/${screenshotFilename}.png`,
-    })
-
     return {
       accessKey,
       storeName,
